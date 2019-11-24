@@ -41,7 +41,7 @@ public class WSClientHandler implements ClientHandler {
 		PacketType type = packet.type;
 		if (type == PacketType.ServerStarted) {
 			BungServerStarted signal = gson.fromJson(message, BungServerStarted.class);
-			ServerInfo serverInfo = ProxyServer.getInstance().constructServerInfo(signal.displayName, new InetSocketAddress("127.0.0.1", signal.port), signal.displayName, false);
+			ServerInfo serverInfo = ProxyServer.getInstance().constructServerInfo(signal.displayName, new InetSocketAddress(signal.ip, signal.port), signal.displayName, false);
 			try {
 				Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
 				servers.put(signal.displayName, serverInfo);
@@ -53,18 +53,22 @@ public class WSClientHandler implements ClientHandler {
 			}
 		} else if (type == PacketType.ServerStopped) {
 			BungServerStopped signal = gson.fromJson(message, BungServerStopped.class);
+			String key = null;
 			for (Entry<String,ServerInfo> entry : ProxyServer.getInstance().getServers().entrySet()) {
 				if (entry.getValue().getAddress().getPort() == signal.port) {
-					try {
-						Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
-						servers.remove(entry.getKey());
-						Field field = Configuration.class.getDeclaredField("servers");
-						field.setAccessible(true);
-						field.set(BungeeCord.getInstance().config, servers);
-					} catch(Exception ex) {
-						ex.printStackTrace();
-					}
+					key = entry.getKey();
 				}
+			}
+			if (key == null)
+				return;
+			try {
+				Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
+				servers.remove(key);
+				Field field = Configuration.class.getDeclaredField("servers");
+				field.setAccessible(true);
+				field.set(BungeeCord.getInstance().config, servers);
+			} catch(Exception ex) {
+				ex.printStackTrace();
 			}
 		} else if (type == PacketType.PlayerSendPacket) {
 			BungPlayerSendPacket signal = gson.fromJson(message, BungPlayerSendPacket.class);
