@@ -73,6 +73,7 @@ public class WSClientHandler implements ClientHandler {
 		} else if (type == PacketType.PlayerSendPacket) {
 			BungPlayerSendPacket signal = gson.fromJson(message, BungPlayerSendPacket.class);
 			ProxiedPlayer p = BungeeCord.getInstance().getPlayer(UUID.fromString(signal.player));
+			
 			p.connect(BungeeCord.getInstance().getServerInfo(signal.server));
 		}
 	}
