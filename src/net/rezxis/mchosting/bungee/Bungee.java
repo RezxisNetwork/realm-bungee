@@ -13,10 +13,10 @@ import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
-import net.rezxis.mchosting.databse.DBPlayer;
-import net.rezxis.mchosting.databse.Database;
-import net.rezxis.mchosting.databse.DBPlayer.Rank;
-import net.rezxis.mchosting.databse.tables.PlayersTable;
+import net.rezxis.mchosting.database.DBPlayer;
+import net.rezxis.mchosting.database.Database;
+import net.rezxis.mchosting.database.DBPlayer.Rank;
+import net.rezxis.mchosting.database.tables.PlayersTable;
 import net.rezxis.mchosting.network.WSClient;
 
 public class Bungee extends Plugin implements Listener {

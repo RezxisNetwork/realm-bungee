@@ -16,8 +16,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/Database"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Network"/>
 	<classpathentry kind="lib" path="BungeeCord.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
