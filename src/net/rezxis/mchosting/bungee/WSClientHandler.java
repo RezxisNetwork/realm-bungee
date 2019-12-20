@@ -85,8 +85,7 @@ public class WSClientHandler implements ClientHandler {
 
 	@Override
 	public void onMessage(ByteBuffer buffer) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
