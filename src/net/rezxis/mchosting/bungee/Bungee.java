@@ -1,28 +1,41 @@
 package net.rezxis.mchosting.bungee;
 
+import java.lang.reflect.Field;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
+import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.conf.Configuration;
 import net.md_5.bungee.event.EventHandler;
 import net.rezxis.mchosting.bungee.WebAPI.McuaResponse;
-import net.rezxis.mchosting.database.DBPlayer;
 import net.rezxis.mchosting.database.Database;
-import net.rezxis.mchosting.database.DBPlayer.Rank;
+import net.rezxis.mchosting.database.object.player.DBIP;
+import net.rezxis.mchosting.database.object.player.DBPIP;
+import net.rezxis.mchosting.database.object.player.DBPlayer;
+import net.rezxis.mchosting.database.object.player.DBPlayer.Rank;
+import net.rezxis.mchosting.database.object.server.DBServer;
+import net.rezxis.mchosting.database.tables.IPTable;
+import net.rezxis.mchosting.database.tables.PIPTable;
 import net.rezxis.mchosting.database.tables.PlayersTable;
+import net.rezxis.mchosting.database.tables.ServersTable;
 import net.rezxis.mchosting.network.WSClient;
 
 public class Bungee extends Plugin implements Listener {
@@ -32,6 +45,9 @@ public class Bungee extends Plugin implements Listener {
 	public Props props;
 	public int min = 15;
 	public PlayersTable pTable;
+	public IPTable ipTable;
+	public PIPTable pipTable;
+	public ServersTable sTable;
 	public ArrayList<String> messages;
 	
 	public void onEnable() {
@@ -39,11 +55,15 @@ public class Bungee extends Plugin implements Listener {
 		BungeeCord.getInstance().pluginManager.registerCommand(this, new RezxisCommand());
 		messages = new ArrayList<>();
 		messages.add(ChatColor.GREEN+"一日一回気に入ったレールムに投票しよう！"+ChatColor.AQUA+" /vote <投票対象サーバーのオーナー名>");
-		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/QAskk72");
+		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/kzBT6xg");
 		messages.add(ChatColor.GREEN+"JMSに投票して報酬をゲットしよう！ "+ChatColor.AQUA+" https://minecraft.jp/servers/play.rezxis.net/vote");
 		Database.init();
 		pTable = new PlayersTable();
+		ipTable = new IPTable();
+		sTable = new ServersTable();
+		pipTable = new PIPTable();
 		getProxy().getPluginManager().registerListener(this, this);
+		
 		props = new Props("hosting.propertis");
 		new Thread(()->{
 				try {
@@ -73,9 +93,10 @@ public class Bungee extends Plugin implements Listener {
 	}
 	
 	@EventHandler
-	public void onPreJoin(PreLoginEvent e) {
+	public void onPreJoin(LoginEvent e) {
+		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
 		try {
-			McuaResponse response = WebAPI.checkIP(e.getConnection().getAddress().getAddress().getHostAddress());
+			McuaResponse response = WebAPI.checkIP(ip);
 			if (response.isBad()) {
 				e.setCancelled(true);
 				e.setCancelReason(ChatColor.RED+"あなたのIPアドレスはブロックされています。");
@@ -85,9 +106,12 @@ public class Bungee extends Plugin implements Listener {
 			ex.printStackTrace();
 		}
 		UUID uuid = e.getConnection().getUniqueId();
+		if (uuid == null) {
+			System.out.println("uuid is null");
+		}
 		DBPlayer player = pTable.get(uuid);
 		if (player == null) {
-			player = new DBPlayer(-1, uuid, Rank.NORMAL, 0, false, new Date(), new Date(), true, new ArrayList<>(), false ,"");
+			player = new DBPlayer(-1, uuid, Rank.NORMAL, 0, false, new Date(), new Date(), true, false ,"");
 			pTable.insert(player);
 		} else {
 			player.setOnline(true);
@@ -97,12 +121,22 @@ public class Bungee extends Plugin implements Listener {
 			e.setCancelReason(ChatColor.RED+player.getReason());
 			return;
 		}
-		if (!player.getIps().contains(e.getConnection().getAddress().getAddress().getHostAddress())) {
-			ArrayList<String> array = player.getIps();
-			array.add(e.getConnection().getAddress().getAddress().getHostAddress());
-			player.setIps(array);
-		}
 		player.update();
+		DBIP dbip = ipTable.get(ip);
+		if (dbip == null) {
+			dbip = new DBIP(-1,ip,false,"",new Date());
+			ipTable.insert(dbip);
+		}
+		if (dbip.isBanned()) {
+			e.setCancelled(true);
+			e.setCancelReason(dbip.getReason());
+			return;
+		}
+		DBPIP dbpip = pipTable.getFromIPPlayer(dbip.getId(),player.getId());
+		if (dbpip == null) {
+			dbpip = new DBPIP(-1,dbip.getId(),player.getId());
+			pipTable.insert(dbpip);
+		}
 	}
 	
 	@EventHandler
