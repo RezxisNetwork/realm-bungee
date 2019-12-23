@@ -26,6 +26,8 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.conf.Configuration;
 import net.md_5.bungee.event.EventHandler;
 import net.rezxis.mchosting.bungee.WebAPI.McuaResponse;
+import net.rezxis.mchosting.bungee.commands.PayCommand;
+import net.rezxis.mchosting.bungee.commands.RezxisCommand;
 import net.rezxis.mchosting.database.Database;
 import net.rezxis.mchosting.database.object.player.DBIP;
 import net.rezxis.mchosting.database.object.player.DBPIP;
@@ -52,7 +54,8 @@ public class Bungee extends Plugin implements Listener {
 	
 	public void onEnable() {
 		instance = this;
-		BungeeCord.getInstance().pluginManager.registerCommand(this, new RezxisCommand());
+		getProxy().getPluginManager().registerCommand(this, new RezxisCommand());
+		getProxy().getPluginManager().registerCommand(this, new PayCommand());
 		messages = new ArrayList<>();
 		messages.add(ChatColor.GREEN+"一日一回気に入ったレールムに投票しよう！"+ChatColor.AQUA+" /vote <投票対象サーバーのオーナー名>");
 		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/kzBT6xg");
@@ -63,7 +66,6 @@ public class Bungee extends Plugin implements Listener {
 		sTable = new ServersTable();
 		pipTable = new PIPTable();
 		getProxy().getPluginManager().registerListener(this, this);
-		
 		props = new Props("hosting.propertis");
 		new Thread(()->{
 				try {

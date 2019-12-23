@@ -1,4 +1,4 @@
-package net.rezxis.mchosting.bungee;
+package net.rezxis.mchosting.bungee.commands;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -8,6 +8,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.rezxis.mchosting.bungee.Bungee;
 import net.rezxis.mchosting.database.object.player.DBIP;
 import net.rezxis.mchosting.database.object.player.DBPIP;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
@@ -135,7 +136,7 @@ public class RezxisCommand extends Command {
 					if (server == null) {
 						msg(sender,"The Player has no server.");
 					} else {
-						msg(sender,"ID : "+server.getID());
+						msg(sender,"ID : "+server.getId());
 						msg(sender,"name : "+server.getDisplayName());
 						msg(sender,"port : "+server.getPort());
 						msg(sender,"status : "+server.getStatus().name());
