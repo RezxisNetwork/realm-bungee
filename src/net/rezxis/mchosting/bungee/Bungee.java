@@ -94,30 +94,28 @@ public class Bungee extends Plugin implements Listener {
 		player.update();
 	}
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
-	public void onPreJoin(LoginEvent e) {
-		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
-		try {
-			McuaResponse response = WebAPI.checkIP(ip);
-			if (response.isBad()) {
-				e.setCancelled(true);
-				e.setCancelReason(ChatColor.RED+"あなたのIPアドレスはブロックされています。");
-				return;
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		UUID uuid = e.getConnection().getUniqueId();
-		if (uuid == null) {
-			System.out.println("uuid is null");
-		}
-		DBPlayer player = pTable.get(uuid);
+	public void onJoin(LoginEvent e) {
+		DBPlayer player = pTable.get(e.getConnection().getUniqueId());
 		if (player == null) {
-			player = new DBPlayer(-1, uuid, Rank.NORMAL, 0, false, new Date(), new Date(), true, false ,"");
+			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), new Date(), true, false ,"",false);
 			pTable.insert(player);
-		} else {
-			player.setOnline(true);
 		}
+		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
+		if (!player.isVpnBypass()) {
+			try {
+				McuaResponse response = WebAPI.checkIP(ip);
+				if (response.isBad()) {
+					e.setCancelled(true);
+					e.setCancelReason(ChatColor.RED+"あなたのIPアドレスはブロックされています。");
+					return;
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		player.setOnline(true);
 		if (player.isBan()) {
 			e.setCancelled(true);
 			e.setCancelReason(ChatColor.RED+player.getReason());
