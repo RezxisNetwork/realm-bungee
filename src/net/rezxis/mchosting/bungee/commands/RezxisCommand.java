@@ -52,7 +52,7 @@ public class RezxisCommand extends Command {
 						ArrayList<DBPIP> pips = Bungee.instance.pipTable.getAllIPPlayer(dp.getId());
 						sender.sendMessage(ChatColor.GREEN+"lookuped for "+pips.size()+" ip link!");
 						for (DBPIP pip : pips) {
-							DBIP dip = Bungee.instance.ipTable.getFromID(pip.getId());
+							DBIP dip = Bungee.instance.ipTable.getFromID(pip.getIp());
 							dip.setBanned(true);
 							dip.setReason(ChatColor.RED+args[2]);
 							dip.update();
