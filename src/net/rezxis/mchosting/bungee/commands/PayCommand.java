@@ -34,9 +34,14 @@ public class PayCommand extends Command {
 			}
 			if (c <= 0) {
 				sender.sendMessage(ChatColor.RED+"正しい値を入れていください。");
+				return;
 			}
 			if (player.getCoin() < c) {
 				sender.sendMessage(ChatColor.RED+"コインが足りません。");
+				return;
+			}
+			if (args[0].equalsIgnoreCase(sender.getName())) {
+				sender.sendMessage(ChatColor.RED+"自分には送金できません。");
 				return;
 			}
 			player.setCoin(player.getCoin()-c);

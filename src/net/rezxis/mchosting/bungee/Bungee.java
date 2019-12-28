@@ -1,43 +1,41 @@
 package net.rezxis.mchosting.bungee;
 
-import java.lang.reflect.Field;
-import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.ServerPing;
+import net.md_5.bungee.api.ServerPing.Protocol;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
+import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.conf.Configuration;
 import net.md_5.bungee.event.EventHandler;
 import net.rezxis.mchosting.bungee.WebAPI.McuaResponse;
+import net.rezxis.mchosting.bungee.commands.HubCommand;
+import net.rezxis.mchosting.bungee.commands.LobbyCommand;
 import net.rezxis.mchosting.bungee.commands.PayCommand;
+import net.rezxis.mchosting.bungee.commands.PingCommand;
 import net.rezxis.mchosting.bungee.commands.RezxisCommand;
 import net.rezxis.mchosting.database.Database;
 import net.rezxis.mchosting.database.object.player.DBIP;
 import net.rezxis.mchosting.database.object.player.DBPIP;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
 import net.rezxis.mchosting.database.object.player.DBPlayer.Rank;
-import net.rezxis.mchosting.database.object.server.DBServer;
+import net.rezxis.mchosting.database.object.player.DBUUID;
 import net.rezxis.mchosting.database.tables.IPTable;
 import net.rezxis.mchosting.database.tables.PIPTable;
 import net.rezxis.mchosting.database.tables.PlayersTable;
 import net.rezxis.mchosting.database.tables.ServersTable;
+import net.rezxis.mchosting.database.tables.UuidTable;
 import net.rezxis.mchosting.network.WSClient;
 
 public class Bungee extends Plugin implements Listener {
@@ -50,12 +48,16 @@ public class Bungee extends Plugin implements Listener {
 	public IPTable ipTable;
 	public PIPTable pipTable;
 	public ServersTable sTable;
+	public UuidTable uTable;
 	public ArrayList<String> messages;
 	
 	public void onEnable() {
 		instance = this;
 		getProxy().getPluginManager().registerCommand(this, new RezxisCommand());
 		getProxy().getPluginManager().registerCommand(this, new PayCommand());
+		getProxy().getPluginManager().registerCommand(this, new HubCommand());
+		getProxy().getPluginManager().registerCommand(this, new LobbyCommand());
+		getProxy().getPluginManager().registerCommand(this, new PingCommand());
 		messages = new ArrayList<>();
 		messages.add(ChatColor.GREEN+"一日一回気に入ったレールムに投票しよう！"+ChatColor.AQUA+" /vote <投票対象サーバーのオーナー名>");
 		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/kzBT6xg");
@@ -65,6 +67,7 @@ public class Bungee extends Plugin implements Listener {
 		ipTable = new IPTable();
 		sTable = new ServersTable();
 		pipTable = new PIPTable();
+		uTable = new UuidTable();
 		getProxy().getPluginManager().registerListener(this, this);
 		props = new Props("hosting.propertis");
 		new Thread(()->{
@@ -85,6 +88,13 @@ public class Bungee extends Plugin implements Listener {
 				}
 			}
 		}, 1, min, TimeUnit.MINUTES);
+	}
+	
+	@EventHandler
+	public void onPing(ProxyPingEvent e) {
+		ServerPing ping = e.getResponse();
+		ping.setVersion(new Protocol("RezxisMC", 340));
+		e.setResponse(ping);
 	}
 	
 	@EventHandler
@@ -136,6 +146,13 @@ public class Bungee extends Plugin implements Listener {
 		if (dbpip == null) {
 			dbpip = new DBPIP(-1,dbip.getId(),player.getId());
 			pipTable.insert(dbpip);
+		}
+		DBUUID dbuid = uTable.get(e.getConnection().getUniqueId());
+		if (dbuid == null) {
+			dbuid = new DBUUID(-1,e.getConnection().getName(), e.getConnection().getUniqueId());
+			uTable.insert(dbuid);
+		} else if (!dbuid.getName().equals(e.getConnection().getName())) {
+			dbuid.setName(e.getConnection().getName());
 		}
 	}
 	

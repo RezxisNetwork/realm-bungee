@@ -20,6 +20,7 @@ public class RezxisCommand extends Command {
 		super("rezxis", "rezxis.admin");
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, String[] args) {
 		if (args[0].equalsIgnoreCase("ban")) {
@@ -40,9 +41,14 @@ public class RezxisCommand extends Command {
 				sender.sendMessage(ChatColor.RED+"Usage /rezxis ipban <target> <reason>");
 			} else {
 				ProxiedPlayer player = BungeeCord.getInstance().getPlayer(args[1]);
-				if (player.isConnected())
+				UUID uuid = null;
+				if (player.isConnected()) {
 					player.disconnect(ChatColor.RED+"Banned!");
-				DBPlayer dp = Bungee.instance.pTable.get(player.getUniqueId());
+					uuid = player.getUniqueId();
+				} else {
+					uuid = Bungee.instance.uTable.get(player.getName()).getUuid();
+				}
+				DBPlayer dp = Bungee.instance.pTable.get(uuid);
 				dp.setBan(true);
 				dp.setReason(ChatColor.RED+args[2]);
 				dp.update();
@@ -76,8 +82,7 @@ public class RezxisCommand extends Command {
 				sender.sendMessage(ChatColor.RED+"Usage /rezxis unban <target>");
 				return;
 			}
-			ProxiedPlayer player = BungeeCord.getInstance().getPlayer(args[1]);
-			DBPlayer dp = Bungee.instance.pTable.get(player.getUniqueId());
+			DBPlayer dp = Bungee.instance.pTable.get(Bungee.instance.uTable.get(args[1]).getUuid());
 			dp.setBan(false);
 			dp.setReason("");
 			dp.update();
@@ -112,11 +117,16 @@ public class RezxisCommand extends Command {
 			}
 			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
 				public void run() {
-					UUID uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
+					UUID uuid;
+					if (BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
+						uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
+					} else {
+						uuid = Bungee.instance.uTable.get(args[1]).getUuid();
+					}
 					DBPlayer player = Bungee.instance.pTable.get(uuid);
 					DBServer server = Bungee.instance.sTable.get(uuid);
 					if (player == null) {
-						sender.sendMessage(ChatColor.RED+args[1]+" doesn't exist!");
+						sender.sendMessage(ChatColor.RED+args[1]+" doesn't exisst!");
 						return;
 					}
 					msg(sender,"Status - "+args[1]);
