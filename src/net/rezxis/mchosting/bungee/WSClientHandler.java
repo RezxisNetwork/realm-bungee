@@ -53,17 +53,9 @@ public class WSClientHandler implements ClientHandler {
 			}
 		} else if (type == PacketType.ServerStopped) {
 			BungServerStopped signal = gson.fromJson(message, BungServerStopped.class);
-			String key = null;
-			for (Entry<String,ServerInfo> entry : ProxyServer.getInstance().getServers().entrySet()) {
-				if (entry.getValue().getAddress().getPort() == signal.port) {
-					key = entry.getKey();
-				}
-			}
-			if (key == null)
-				return;
 			try {
 				Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
-				servers.remove(key);
+				servers.remove(signal.name);
 				Field field = Configuration.class.getDeclaredField("servers");
 				field.setAccessible(true);
 				field.set(BungeeCord.getInstance().config, servers);

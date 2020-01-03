@@ -28,10 +28,17 @@ public class RezxisCommand extends Command {
 			if (args.length != 3) {
 				sender.sendMessage(ChatColor.RED+"Usage /rezxis ban <target> <reason>");
 			} else {
+				UUID uuid;
 				ProxiedPlayer player = BungeeCord.getInstance().getPlayer(args[1]);
-				if (player.isConnected())
+				if (player == null) {
+					uuid = Bungee.instance.uTable.get(args[1]).getUuid();
+				} else if (player.isConnected()) {
+					uuid = player.getUniqueId();
 					player.disconnect(ChatColor.RED+"Banned!");
-				DBPlayer dp = Bungee.instance.pTable.get(player.getUniqueId());
+				} else {
+					uuid = Bungee.instance.uTable.get(args[1]).getUuid();
+				}
+				DBPlayer dp = Bungee.instance.pTable.get(uuid);
 				dp.setBan(true);
 				dp.setReason(args[2]);
 				dp.update();
@@ -42,11 +49,13 @@ public class RezxisCommand extends Command {
 			} else {
 				ProxiedPlayer player = BungeeCord.getInstance().getPlayer(args[1]);
 				UUID uuid = null;
-				if (player.isConnected()) {
-					player.disconnect(ChatColor.RED+"Banned!");
+				if (player == null) {
+					uuid = Bungee.instance.uTable.get(args[1]).getUuid();
+				} else if (player.isConnected()) {
 					uuid = player.getUniqueId();
+					player.disconnect(ChatColor.RED+"Banned!");
 				} else {
-					uuid = Bungee.instance.uTable.get(player.getName()).getUuid();
+					uuid = Bungee.instance.uTable.get(args[1]).getUuid();
 				}
 				DBPlayer dp = Bungee.instance.pTable.get(uuid);
 				dp.setBan(true);
