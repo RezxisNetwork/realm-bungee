@@ -14,6 +14,11 @@ import java.util.Properties;
 public class Props {
 
 	public final String SYNC_ADDRESS;
+	public final String DB_NAME;
+	public final String DB_HOST;
+	public final String DB_USER;
+	public final String DB_PASS;
+	public final String DB_PORT;
 	
 	final Properties prop=new Properties();
 	public Props(String fname) {
@@ -32,5 +37,10 @@ public class Props {
 			e.printStackTrace();
 		}
         SYNC_ADDRESS = prop.getProperty("sync_address");
+        DB_HOST=prop.getProperty("db_host");
+        DB_USER=prop.getProperty("db_user");
+        DB_PASS=prop.getProperty("db_pass");
+        DB_PORT=prop.getProperty("db_port");
+        DB_NAME=prop.getProperty("db_name");
 	}
 }

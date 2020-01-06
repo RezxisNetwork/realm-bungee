@@ -25,12 +25,15 @@ import net.rezxis.mchosting.bungee.commands.LobbyCommand;
 import net.rezxis.mchosting.bungee.commands.PayCommand;
 import net.rezxis.mchosting.bungee.commands.PingCommand;
 import net.rezxis.mchosting.bungee.commands.RezxisCommand;
+import net.rezxis.mchosting.bungee.tasks.AnnounceTask;
+import net.rezxis.mchosting.bungee.tasks.RewardTask;
 import net.rezxis.mchosting.database.Database;
 import net.rezxis.mchosting.database.object.player.DBIP;
 import net.rezxis.mchosting.database.object.player.DBPIP;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
 import net.rezxis.mchosting.database.object.player.DBPlayer.Rank;
 import net.rezxis.mchosting.database.object.player.DBUUID;
+import net.rezxis.mchosting.database.tables.CrateTable;
 import net.rezxis.mchosting.database.tables.IPTable;
 import net.rezxis.mchosting.database.tables.PIPTable;
 import net.rezxis.mchosting.database.tables.PlayersTable;
@@ -49,6 +52,7 @@ public class Bungee extends Plugin implements Listener {
 	public PIPTable pipTable;
 	public ServersTable sTable;
 	public UuidTable uTable;
+	public CrateTable cTable;
 	public ArrayList<String> messages;
 	
 	public void onEnable() {
@@ -62,14 +66,15 @@ public class Bungee extends Plugin implements Listener {
 		messages.add(ChatColor.GREEN+"一日一回気に入ったレールムに投票しよう！"+ChatColor.AQUA+" /vote <投票対象サーバーのオーナー名>");
 		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/kzBT6xg");
 		messages.add(ChatColor.GREEN+"JMSに投票して報酬をゲットしよう！ "+ChatColor.AQUA+" https://minecraft.jp/servers/play.rezxis.net/vote");
-		Database.init();
+		props = new Props("hosting.propertis");
+		Database.init(props.DB_HOST,props.DB_USER,props.DB_PASS,props.DB_PORT,props.DB_NAME);
 		pTable = new PlayersTable();
 		ipTable = new IPTable();
 		sTable = new ServersTable();
 		pipTable = new PIPTable();
 		uTable = new UuidTable();
+		cTable = new CrateTable();
 		getProxy().getPluginManager().registerListener(this, this);
-		props = new Props("hosting.propertis");
 		new Thread(()->{
 				try {
 					ws = new WSClient(new URI(props.SYNC_ADDRESS), new WSClientHandler());
@@ -80,14 +85,9 @@ public class Bungee extends Plugin implements Listener {
 				ws.connect();
 			
 		}).start();
-		this.getProxy().getScheduler().schedule(this, new Runnable() {
-			public void run() {
-				String msg = messages.get(new Random().nextInt(messages.size()-1));
-				for (ProxiedPlayer player : getProxy().getPlayers()) {
-					player.sendMessage(msg);
-				}
-			}
-		}, 1, min, TimeUnit.MINUTES);
+		
+		this.getProxy().getScheduler().schedule(this, new AnnounceTask(), 1, min, TimeUnit.MINUTES);
+		this.getProxy().getScheduler().schedule(this, new RewardTask(), 15, TimeUnit.MINUTES);
 	}
 	
 	@EventHandler

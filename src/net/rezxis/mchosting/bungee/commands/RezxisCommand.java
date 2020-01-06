@@ -29,14 +29,14 @@ public class RezxisCommand extends Command {
 				sender.sendMessage(ChatColor.RED+"Usage /rezxis ban <target> <reason>");
 			} else {
 				UUID uuid;
-				ProxiedPlayer player = BungeeCord.getInstance().getPlayer(args[1]);
-				if (player == null) {
+				if (BungeeCord.getInstance().getPlayer(args[1]) != null) {
 					uuid = Bungee.instance.uTable.get(args[1]).getUuid();
-				} else if (player.isConnected()) {
-					uuid = player.getUniqueId();
-					player.disconnect(ChatColor.RED+"Banned!");
 				} else {
-					uuid = Bungee.instance.uTable.get(args[1]).getUuid();
+					if (!BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
+						uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
+					} else {
+						uuid = Bungee.instance.uTable.get(args[1]).getUuid();
+					}
 				}
 				DBPlayer dp = Bungee.instance.pTable.get(uuid);
 				dp.setBan(true);
@@ -49,13 +49,14 @@ public class RezxisCommand extends Command {
 			} else {
 				ProxiedPlayer player = BungeeCord.getInstance().getPlayer(args[1]);
 				UUID uuid = null;
-				if (player == null) {
+				if (player != null) {
 					uuid = Bungee.instance.uTable.get(args[1]).getUuid();
-				} else if (player.isConnected()) {
-					uuid = player.getUniqueId();
-					player.disconnect(ChatColor.RED+"Banned!");
 				} else {
-					uuid = Bungee.instance.uTable.get(args[1]).getUuid();
+					if (!player.isConnected()) {
+						uuid = player.getUniqueId();
+					} else {
+						uuid = Bungee.instance.uTable.get(args[1]).getUuid();
+					}
 				}
 				DBPlayer dp = Bungee.instance.pTable.get(uuid);
 				dp.setBan(true);
@@ -127,10 +128,14 @@ public class RezxisCommand extends Command {
 			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
 				public void run() {
 					UUID uuid;
-					if (BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
-						uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
-					} else {
+					if (BungeeCord.getInstance().getPlayer(args[1]) != null) {
 						uuid = Bungee.instance.uTable.get(args[1]).getUuid();
+					} else {
+						if (!BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
+							uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
+						} else {
+							uuid = Bungee.instance.uTable.get(args[1]).getUuid();
+						}
 					}
 					DBPlayer player = Bungee.instance.pTable.get(uuid);
 					DBServer server = Bungee.instance.sTable.get(uuid);
