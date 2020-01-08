@@ -12,6 +12,7 @@ public class HubCommand extends Command {
 		super("hub");
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender arg0, String[] arg1) {
 		ProxiedPlayer player = (ProxiedPlayer) arg0;

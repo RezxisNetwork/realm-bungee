@@ -47,13 +47,12 @@ public class RezxisCommand extends Command {
 			if (args.length != 3) {
 				sender.sendMessage(ChatColor.RED+"Usage /rezxis ipban <target> <reason>");
 			} else {
-				ProxiedPlayer player = BungeeCord.getInstance().getPlayer(args[1]);
 				UUID uuid = null;
-				if (player != null) {
+				if (BungeeCord.getInstance().getPlayer(args[1]) != null) {
 					uuid = Bungee.instance.uTable.get(args[1]).getUuid();
 				} else {
-					if (!player.isConnected()) {
-						uuid = player.getUniqueId();
+					if (!BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
+						uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
 					} else {
 						uuid = Bungee.instance.uTable.get(args[1]).getUuid();
 					}
@@ -80,6 +79,12 @@ public class RezxisCommand extends Command {
 								target.setBan(true);
 								target.setReason(ChatColor.RED+"sub account : "+args[1]+" - "+args[2]);
 								target.update();
+								ProxiedPlayer tgt = BungeeCord.getInstance().getPlayer(target.getUUID());
+								if (tgt != null) {
+									if (tgt.isConnected()) {
+										tgt.disconnect(ChatColor.RED+"sub account : "+args[1]+" - "+args[2]);
+									}
+								}
 							}
 							sender.sendMessage(ChatColor.RED+"banned for "+targets.size()+" accounts in "+dip.getIp()+" !");
 						}
@@ -102,7 +107,7 @@ public class RezxisCommand extends Command {
 					ArrayList<DBPIP> pips = Bungee.instance.pipTable.getAllIPPlayer(dp.getId());
 					sender.sendMessage(ChatColor.GREEN+"lookuped for "+pips.size()+" ip link!");
 					for (DBPIP pip : pips) {
-						DBIP dip = Bungee.instance.ipTable.getFromID(pip.getId());
+						DBIP dip = Bungee.instance.ipTable.getFromID(pip.getIp());
 						dip.setBanned(false);
 						dip.setReason("");
 						dip.update();
@@ -129,13 +134,13 @@ public class RezxisCommand extends Command {
 				public void run() {
 					UUID uuid;
 					if (BungeeCord.getInstance().getPlayer(args[1]) != null) {
-						uuid = Bungee.instance.uTable.get(args[1]).getUuid();
-					} else {
-						if (!BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
+						if (BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
 							uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
 						} else {
 							uuid = Bungee.instance.uTable.get(args[1]).getUuid();
 						}
+					} else {
+						uuid = Bungee.instance.uTable.get(args[1]).getUuid();
 					}
 					DBPlayer player = Bungee.instance.pTable.get(uuid);
 					DBServer server = Bungee.instance.sTable.get(uuid);
@@ -171,7 +176,7 @@ public class RezxisCommand extends Command {
 					msg(sender,"account status");
 					ArrayList<DBPIP> pips = Bungee.instance.pipTable.getAllIPPlayer(player.getId());
 					for (DBPIP pip : pips) {
-						DBIP dip = Bungee.instance.ipTable.getFromID(pip.getId());
+						DBIP dip = Bungee.instance.ipTable.getFromID(pip.getIp());
 						msg(sender,"ip : "+dip.getIp());
 						ArrayList<DBPIP> targets = Bungee.instance.pipTable.getAllfromIP(dip.getId());
 						for (DBPIP spip : targets) {
@@ -184,6 +189,7 @@ public class RezxisCommand extends Command {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	private static void msg(CommandSender sender, String msg) {
 		sender.sendMessage(ChatColor.GREEN+msg);
 	}

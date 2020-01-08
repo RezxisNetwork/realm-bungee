@@ -3,16 +3,15 @@ package net.rezxis.mchosting.bungee;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Protocol;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PlayerHandshakeEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
@@ -20,6 +19,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 import net.rezxis.mchosting.bungee.WebAPI.McuaResponse;
+import net.rezxis.mchosting.bungee.commands.BuyRewardCommand;
 import net.rezxis.mchosting.bungee.commands.HubCommand;
 import net.rezxis.mchosting.bungee.commands.LobbyCommand;
 import net.rezxis.mchosting.bungee.commands.PayCommand;
@@ -57,14 +57,16 @@ public class Bungee extends Plugin implements Listener {
 	
 	public void onEnable() {
 		instance = this;
+		getProxy().registerChannel("rezxis:channel");
 		getProxy().getPluginManager().registerCommand(this, new RezxisCommand());
 		getProxy().getPluginManager().registerCommand(this, new PayCommand());
 		getProxy().getPluginManager().registerCommand(this, new HubCommand());
 		getProxy().getPluginManager().registerCommand(this, new LobbyCommand());
 		getProxy().getPluginManager().registerCommand(this, new PingCommand());
+		getProxy().getPluginManager().registerCommand(this, new BuyRewardCommand());
 		messages = new ArrayList<>();
 		messages.add(ChatColor.GREEN+"一日一回気に入ったレールムに投票しよう！"+ChatColor.AQUA+" /vote <投票対象サーバーのオーナー名>");
-		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/kzBT6xg");
+		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/vzaReG2");
 		messages.add(ChatColor.GREEN+"JMSに投票して報酬をゲットしよう！ "+ChatColor.AQUA+" https://minecraft.jp/servers/play.rezxis.net/vote");
 		props = new Props("hosting.propertis");
 		Database.init(props.DB_HOST,props.DB_USER,props.DB_PASS,props.DB_PORT,props.DB_NAME);
@@ -87,7 +89,11 @@ public class Bungee extends Plugin implements Listener {
 		}).start();
 		
 		this.getProxy().getScheduler().schedule(this, new AnnounceTask(), 1, min, TimeUnit.MINUTES);
-		this.getProxy().getScheduler().schedule(this, new RewardTask(), 15, TimeUnit.MINUTES);
+		this.getProxy().getScheduler().schedule(this, new RewardTask(), 1, 15, TimeUnit.MINUTES);
+	}
+	
+	@EventHandler
+	public void onHandShake(PlayerHandshakeEvent event) {
 	}
 	
 	@EventHandler
@@ -109,7 +115,7 @@ public class Bungee extends Plugin implements Listener {
 	public void onJoin(LoginEvent e) {
 		DBPlayer player = pTable.get(e.getConnection().getUniqueId());
 		if (player == null) {
-			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), new Date(), true, false ,"",false);
+			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), new Date(), true, false ,"",false,false,new Date(),"",0);
 			pTable.insert(player);
 		}
 		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
@@ -163,9 +169,15 @@ public class Bungee extends Plugin implements Listener {
 		if (rank == Rank.STAFF | rank == Rank.DEVELOPER | rank == Rank.OWNER) {
 			e.getPlayer().setPermission("rezxis.admin", true);
 		}
+		if (rank == Rank.DEVELOPER) {
+			e.getPlayer().setPermission("rezxis.rank", true);
+		} else {
+			e.getPlayer().setPermission("rezxis.rank", false);
+		}
 		player.update(); 
 	}
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
     public void onServerKickEvent(ServerKickEvent ev) {
 		Server server = ev.getPlayer().getServer();

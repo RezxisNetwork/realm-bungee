@@ -12,6 +12,7 @@ public class PingCommand extends Command {
 		super("ping");
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender arg0, String[] arg1) {
 		ProxiedPlayer player = (ProxiedPlayer)arg0;

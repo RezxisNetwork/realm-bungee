@@ -8,6 +8,7 @@ import net.rezxis.mchosting.bungee.Bungee;
 
 public class AnnounceTask implements Runnable {
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		String msg = Bungee.instance.messages.get(new Random().nextInt(Bungee.instance.messages.size()-1));
