@@ -10,6 +10,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.rezxis.mchosting.bungee.Bungee;
+import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
 import net.rezxis.mchosting.database.object.player.DBPlayer.Rank;
 
@@ -24,7 +25,7 @@ public class BuyRewardCommand extends Command {
 	public void execute(CommandSender sender, String[] args) {
 		UUID uuid = UUID.fromString(args[0]);
 		ProxiedPlayer pp = BungeeCord.getInstance().getPlayer(uuid);
-		DBPlayer player = Bungee.instance.pTable.get(uuid);
+		DBPlayer player = Tables.getPTable().get(uuid);
 		if (Integer.valueOf(args[1]) == 0) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(new Date());

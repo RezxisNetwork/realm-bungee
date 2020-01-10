@@ -5,6 +5,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.rezxis.mchosting.bungee.Bungee;
+import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
 
 public class PayCommand extends Command {
@@ -20,8 +21,8 @@ public class PayCommand extends Command {
 		if (args.length != 2) {
 			sender.sendMessage(ChatColor.RED+"使い方 : /pay 送金先 金額");
 		} else {
-			DBPlayer player = Bungee.instance.pTable.get(BungeeCord.getInstance().getPlayer(sender.getName()).getUniqueId());
-			DBPlayer target = Bungee.instance.pTable.get(BungeeCord.getInstance().getPlayer(args[0]).getUniqueId());
+			DBPlayer player = Tables.getPTable().get(BungeeCord.getInstance().getPlayer(sender.getName()).getUniqueId());
+			DBPlayer target = Tables.getPTable().get(BungeeCord.getInstance().getPlayer(args[0]).getUniqueId());
 			if (target == null) {
 				sender.sendMessage(ChatColor.RED+"指定されたプレイヤーは存在しません");
 				return;

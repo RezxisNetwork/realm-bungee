@@ -14,7 +14,10 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PlayerHandshakeEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
+import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
+import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.event.ServerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
@@ -28,11 +31,15 @@ import net.rezxis.mchosting.bungee.commands.RezxisCommand;
 import net.rezxis.mchosting.bungee.tasks.AnnounceTask;
 import net.rezxis.mchosting.bungee.tasks.RewardTask;
 import net.rezxis.mchosting.database.Database;
+import net.rezxis.mchosting.database.Tables;
+import net.rezxis.mchosting.database.object.ServerWrapper;
 import net.rezxis.mchosting.database.object.player.DBIP;
 import net.rezxis.mchosting.database.object.player.DBPIP;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
 import net.rezxis.mchosting.database.object.player.DBPlayer.Rank;
 import net.rezxis.mchosting.database.object.player.DBUUID;
+import net.rezxis.mchosting.database.object.server.DBServer;
+import net.rezxis.mchosting.database.object.server.DBThirdParty;
 import net.rezxis.mchosting.database.tables.CrateTable;
 import net.rezxis.mchosting.database.tables.IPTable;
 import net.rezxis.mchosting.database.tables.PIPTable;
@@ -47,12 +54,6 @@ public class Bungee extends Plugin implements Listener {
 	public WSClient ws;
 	public Props props;
 	public int min = 15;
-	public PlayersTable pTable;
-	public IPTable ipTable;
-	public PIPTable pipTable;
-	public ServersTable sTable;
-	public UuidTable uTable;
-	public CrateTable cTable;
 	public ArrayList<String> messages;
 	
 	public void onEnable() {
@@ -70,12 +71,6 @@ public class Bungee extends Plugin implements Listener {
 		messages.add(ChatColor.GREEN+"JMSに投票して報酬をゲットしよう！ "+ChatColor.AQUA+" https://minecraft.jp/servers/play.rezxis.net/vote");
 		props = new Props("hosting.propertis");
 		Database.init(props.DB_HOST,props.DB_USER,props.DB_PASS,props.DB_PORT,props.DB_NAME);
-		pTable = new PlayersTable();
-		ipTable = new IPTable();
-		sTable = new ServersTable();
-		pipTable = new PIPTable();
-		uTable = new UuidTable();
-		cTable = new CrateTable();
 		getProxy().getPluginManager().registerListener(this, this);
 		new Thread(()->{
 				try {
@@ -93,6 +88,38 @@ public class Bungee extends Plugin implements Listener {
 	}
 	
 	@EventHandler
+	public void onConnect(ServerConnectedEvent event) {
+		ServerWrapper swp = ServerWrapper.getServerByName(event.getServer().getInfo().getName());
+		if (swp != null) {
+			if (swp.isDBServer()) {
+				DBServer ds = swp.getDBServer();
+				ds.setPlayers(ds.getPlayers()+1);
+				ds.update();
+			} else {
+				DBThirdParty dp = swp.getDBThirdParty();
+				dp.setPlayers(dp.getPlayers()+1);
+				dp.update();
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onDisconnect(ServerDisconnectEvent event) {
+		ServerWrapper swp = ServerWrapper.getServerByName(event.getTarget().getName());
+		if (swp != null) {
+			if (swp.isDBServer()) {
+				DBServer ds = swp.getDBServer();
+				ds.setPlayers(ds.getPlayers()-1);
+				ds.update();
+			} else {
+				DBThirdParty dp = swp.getDBThirdParty();
+				dp.setPlayers(dp.getPlayers()-1);
+				dp.update();
+			}
+		}
+	}
+	
+	@EventHandler
 	public void onHandShake(PlayerHandshakeEvent event) {
 	}
 	
@@ -105,7 +132,7 @@ public class Bungee extends Plugin implements Listener {
 	
 	@EventHandler
 	public void onLeft(PlayerDisconnectEvent e) {
-		DBPlayer player = pTable.get(e.getPlayer().getUniqueId());
+		DBPlayer player = Tables.getPTable().get(e.getPlayer().getUniqueId());
 		player.setOnline(false);
 		player.update();
 	}
@@ -113,10 +140,10 @@ public class Bungee extends Plugin implements Listener {
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onJoin(LoginEvent e) {
-		DBPlayer player = pTable.get(e.getConnection().getUniqueId());
+		DBPlayer player = Tables.getPTable().get(e.getConnection().getUniqueId());
 		if (player == null) {
 			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), new Date(), true, false ,"",false,false,new Date(),"",0);
-			pTable.insert(player);
+			Tables.getPTable().insert(player);
 		}
 		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
 		if (!player.isVpnBypass()) {
@@ -138,25 +165,25 @@ public class Bungee extends Plugin implements Listener {
 			return;
 		}
 		player.update();
-		DBIP dbip = ipTable.get(ip);
+		DBIP dbip = Tables.getIpTable().get(ip);
 		if (dbip == null) {
 			dbip = new DBIP(-1,ip,false,"",new Date());
-			ipTable.insert(dbip);
+			Tables.getIpTable().insert(dbip);
 		}
 		if (dbip.isBanned()) {
 			e.setCancelled(true);
 			e.setCancelReason(dbip.getReason());
 			return;
 		}
-		DBPIP dbpip = pipTable.getFromIPPlayer(dbip.getId(),player.getId());
+		DBPIP dbpip = Tables.getPipTable().getFromIPPlayer(dbip.getId(),player.getId());
 		if (dbpip == null) {
 			dbpip = new DBPIP(-1,dbip.getId(),player.getId());
-			pipTable.insert(dbpip);
+			Tables.getPipTable().insert(dbpip);
 		}
-		DBUUID dbuid = uTable.get(e.getConnection().getUniqueId());
+		DBUUID dbuid = Tables.getUTable().get(e.getConnection().getUniqueId());
 		if (dbuid == null) {
 			dbuid = new DBUUID(-1,e.getConnection().getName(), e.getConnection().getUniqueId());
-			uTable.insert(dbuid);
+			Tables.getUTable().insert(dbuid);
 		} else if (!dbuid.getName().equals(e.getConnection().getName())) {
 			dbuid.setName(e.getConnection().getName());
 		}
@@ -164,7 +191,7 @@ public class Bungee extends Plugin implements Listener {
 	
 	@EventHandler
 	public void onJoin(PostLoginEvent e) {
-		DBPlayer player = pTable.get(e.getPlayer().getUniqueId());
+		DBPlayer player = Tables.getPTable().get(e.getPlayer().getUniqueId());
 		Rank rank = player.getRank();
 		if (rank == Rank.STAFF | rank == Rank.DEVELOPER | rank == Rank.OWNER) {
 			e.getPlayer().setPermission("rezxis.admin", true);
