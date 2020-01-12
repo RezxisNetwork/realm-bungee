@@ -28,6 +28,7 @@ import net.rezxis.mchosting.bungee.commands.LobbyCommand;
 import net.rezxis.mchosting.bungee.commands.PayCommand;
 import net.rezxis.mchosting.bungee.commands.PingCommand;
 import net.rezxis.mchosting.bungee.commands.RezxisCommand;
+import net.rezxis.mchosting.bungee.commands.VoteCommand;
 import net.rezxis.mchosting.bungee.tasks.AnnounceTask;
 import net.rezxis.mchosting.bungee.tasks.RewardTask;
 import net.rezxis.mchosting.database.Database;
@@ -58,15 +59,15 @@ public class Bungee extends Plugin implements Listener {
 	
 	public void onEnable() {
 		instance = this;
-		getProxy().registerChannel("rezxis:channel");
 		getProxy().getPluginManager().registerCommand(this, new RezxisCommand());
 		getProxy().getPluginManager().registerCommand(this, new PayCommand());
 		getProxy().getPluginManager().registerCommand(this, new HubCommand());
 		getProxy().getPluginManager().registerCommand(this, new LobbyCommand());
 		getProxy().getPluginManager().registerCommand(this, new PingCommand());
 		getProxy().getPluginManager().registerCommand(this, new BuyRewardCommand());
+		getProxy().getPluginManager().registerCommand(this, new VoteCommand());
 		messages = new ArrayList<>();
-		messages.add(ChatColor.GREEN+"一日一回気に入ったレールムに投票しよう！"+ChatColor.AQUA+" /vote <投票対象サーバーのオーナー名>");
+		messages.add(ChatColor.GREEN+"一日一回気に入ったレールムに投票しよう！"+ChatColor.AQUA+" 投票したいサーバーに入って/vote");
 		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/vzaReG2");
 		messages.add(ChatColor.GREEN+"JMSに投票して報酬をゲットしよう！ "+ChatColor.AQUA+" https://minecraft.jp/servers/play.rezxis.net/vote");
 		props = new Props("hosting.propertis");
@@ -121,6 +122,7 @@ public class Bungee extends Plugin implements Listener {
 	
 	@EventHandler
 	public void onHandShake(PlayerHandshakeEvent event) {
+		
 	}
 	
 	@EventHandler
