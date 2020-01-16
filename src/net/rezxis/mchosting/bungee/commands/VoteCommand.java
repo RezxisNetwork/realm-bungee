@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -36,7 +33,7 @@ public class VoteCommand extends Command {
 		} else {
 			ServerWrapper server = ServerWrapper.getServerByName(pp.getServer().getInfo().getName());
 			if (server == null) {
-				pp.sendMessage(ChatColor.RED+"エラーが発生しました。");
+				pp.sendMessage(ChatColor.RED+"投票対象のサーバーに接続して投票してください。");
 				return;
 			} else {
 				if (server.isDBServer()) {

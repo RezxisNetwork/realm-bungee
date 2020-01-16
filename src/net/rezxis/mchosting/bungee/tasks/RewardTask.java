@@ -5,7 +5,6 @@ import java.util.Random;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.rezxis.mchosting.bungee.Bungee;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.crates.CrateTypes;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
