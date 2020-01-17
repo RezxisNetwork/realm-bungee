@@ -41,16 +41,19 @@ public class JoinListeners implements Listener {
 			Tables.getPTable().insert(player);
 		}
 		if (!player.isVpnBypass()) {
-			try {
-				McuaResponse response = WebAPI.checkIP(ip);
-				if (response.isBad()) {
-					e.setCancelled(true);
-					e.setCancelReason(new TextComponent(ChatColor.RED+"あなたのIPアドレスはブロックされています。"));
-					return;
+			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
+				public void run() {
+					try {
+						McuaResponse response = WebAPI.checkIP(ip);
+						if (response.isBad()) {
+							BungeeCord.getInstance().getPlayer(e.getConnection().getUniqueId()).disconnect(new TextComponent(ChatColor.RED+"あなたのIPアドレスはブロックされています。"));
+							return;
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+			});
 		}
 		player.setOnline(true);
 		if (player.isBan()) {
