@@ -51,7 +51,7 @@ public class RezxisCommand extends Command {
 			if (args.length != 3) {
 				sender.sendMessage(ChatColor.RED+"Usage /rezxis ipban <target> <reason>");
 			} else {
-				UUID uuid = null;
+				final UUID uuid;
 				if (BungeeCord.getInstance().getPlayer(args[1]) == null) {
 					uuid = Tables.getUTable().get(args[1]).getUuid();
 				} else {
@@ -80,6 +80,8 @@ public class RezxisCommand extends Command {
 							ArrayList<DBPIP> targets = Tables.getPipTable().getAllfromIP(dip.getId());
 							for (DBPIP spip : targets) {
 								DBPlayer target = Tables.getPTable().getFromID(spip.getPlayer());
+								if (target.getUUID().equals(uuid))
+									continue;
 								target.setBan(true);
 								target.setReason(ChatColor.RED+"sub account : "+args[1]+" - "+args[2]);
 								target.update();
