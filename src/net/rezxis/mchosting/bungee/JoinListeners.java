@@ -28,6 +28,7 @@ public class JoinListeners implements Listener {
 		DBPlayer player = Tables.getPTable().get(e.getConnection().getUniqueId());
 		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
 		
+		//check multi connection;
 		for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
 			if (!pp.getUniqueId().equals(e.getConnection().getUniqueId())) {
 				if (pp.getAddress().getHostString().equals(ip)) {
@@ -55,34 +56,36 @@ public class JoinListeners implements Listener {
 				}
 			});
 		}
-		player.setOnline(true);
-		if (player.isBan()) {
-			e.setCancelled(true);
-			e.setCancelReason(new TextComponent(ChatColor.RED+player.getReason()));
-			return;
-		}
-		player.update();
-		DBIP dbip = Tables.getIpTable().get(ip);
-		if (dbip == null) {
-			dbip = new DBIP(-1,ip,false,"",new Date());
-			Tables.getIpTable().insert(dbip);
-		}
-		if (dbip.isBanned()) {
-			e.setCancelled(true);
-			e.setCancelReason(new TextComponent(dbip.getReason()));
-			return;
-		}
-		DBPIP dbpip = Tables.getPipTable().getFromIPPlayer(dbip.getId(),player.getId());
-		if (dbpip == null) {
-			dbpip = new DBPIP(-1,dbip.getId(),player.getId());
-			Tables.getPipTable().insert(dbpip);
-		}
 		DBUUID dbuid = Tables.getUTable().get(e.getConnection().getUniqueId());
 		if (dbuid == null) {
 			dbuid = new DBUUID(-1,e.getConnection().getName(), e.getConnection().getUniqueId());
 			Tables.getUTable().insert(dbuid);
 		} else if (!dbuid.getName().equals(e.getConnection().getName())) {
 			dbuid.setName(e.getConnection().getName());
+		}
+		
+		if (player.isBan()) {
+			e.setCancelled(true);
+			e.setCancelReason(new TextComponent(ChatColor.RED+player.getReason()));
+			return;
+		}
+		DBIP dbip = Tables.getIpTable().get(ip);
+		if (dbip == null) {
+			dbip = new DBIP(-1,ip,false,"",new Date());
+			Tables.getIpTable().insert(dbip);
+		}
+		DBPIP dbpip = Tables.getPipTable().getFromIPPlayer(dbip.getId(),player.getId());
+		if (dbpip == null) {
+			dbpip = new DBPIP(-1,dbip.getId(),player.getId());
+			Tables.getPipTable().insert(dbpip);
+		}
+		if (dbip.isBanned()) {
+			e.setCancelled(true);
+			e.setCancelReason(new TextComponent(dbip.getReason()));
+			player.setBan(true);
+			player.setReason(dbip.getReason());
+			player.update();
+			return;
 		}
 	}
 	
@@ -98,6 +101,7 @@ public class JoinListeners implements Listener {
 		} else {
 			e.getPlayer().setPermission("rezxis.rank", false);
 		}
+		player.setOnline(true);
 		player.update(); 
 	}
 	
