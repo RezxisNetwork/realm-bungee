@@ -1,13 +1,13 @@
 package net.rezxis.mchosting.bungee;
 
-import java.lang.reflect.Method;
-import java.net.InetSocketAddress;
 import java.util.Date;
 
-import io.netty.channel.AbstractChannel;
-import io.netty.channel.Channel;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PlayerHandshakeEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -22,21 +22,30 @@ import net.rezxis.mchosting.database.object.player.DBPlayer.Rank;
 
 public class JoinListeners implements Listener {
 
-	@SuppressWarnings("deprecation")
+	
 	@EventHandler
 	public void onJoin(LoginEvent e) {
 		DBPlayer player = Tables.getPTable().get(e.getConnection().getUniqueId());
+		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
+		
+		for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
+			if (!pp.getUniqueId().equals(e.getConnection().getUniqueId())) {
+				if (pp.getAddress().getHostString().equals(ip)) {
+					e.setCancelled(true);
+					e.setCancelReason(new TextComponent(ChatColor.RED+"同時接続はできません。"));
+				}
+			}
+		}
 		if (player == null) {
 			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), new Date(), true, false ,"",false,false,new Date(),"",0);
 			Tables.getPTable().insert(player);
 		}
-		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
 		if (!player.isVpnBypass()) {
 			try {
 				McuaResponse response = WebAPI.checkIP(ip);
 				if (response.isBad()) {
 					e.setCancelled(true);
-					e.setCancelReason(ChatColor.RED+"あなたのIPアドレスはブロックされています。");
+					e.setCancelReason(new TextComponent(ChatColor.RED+"あなたのIPアドレスはブロックされています。"));
 					return;
 				}
 			} catch (Exception ex) {
@@ -46,7 +55,7 @@ public class JoinListeners implements Listener {
 		player.setOnline(true);
 		if (player.isBan()) {
 			e.setCancelled(true);
-			e.setCancelReason(ChatColor.RED+player.getReason());
+			e.setCancelReason(new TextComponent(ChatColor.RED+player.getReason()));
 			return;
 		}
 		player.update();
@@ -57,7 +66,7 @@ public class JoinListeners implements Listener {
 		}
 		if (dbip.isBanned()) {
 			e.setCancelled(true);
-			e.setCancelReason(dbip.getReason());
+			e.setCancelReason(new TextComponent(dbip.getReason()));
 			return;
 		}
 		DBPIP dbpip = Tables.getPipTable().getFromIPPlayer(dbip.getId(),player.getId());
@@ -87,6 +96,11 @@ public class JoinListeners implements Listener {
 			e.getPlayer().setPermission("rezxis.rank", false);
 		}
 		player.update(); 
+	}
+	
+	@EventHandler
+	public void onLeft(PlayerDisconnectEvent event) {
+		Bungee.instance.inspection.remove(event.getPlayer().getUniqueId());
 	}
 	
 	@EventHandler

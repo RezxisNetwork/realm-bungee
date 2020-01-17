@@ -2,12 +2,17 @@ package net.rezxis.mchosting.bungee;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Protocol;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
+import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
@@ -40,6 +45,7 @@ public class Bungee extends Plugin implements Listener {
 	public Props props;
 	public int min = 15;
 	public ArrayList<String> messages;
+	public ArrayList<UUID> inspection;
 	
 	public void onEnable() {
 		instance = this;
@@ -69,8 +75,19 @@ public class Bungee extends Plugin implements Listener {
 			
 		}).start();
 		
+		inspection = new ArrayList<>();
 		this.getProxy().getScheduler().schedule(this, new AnnounceTask(), 1, min, TimeUnit.MINUTES);
 		this.getProxy().getScheduler().schedule(this, new RewardTask(), 1, 15, TimeUnit.MINUTES);
+	}
+	
+	@EventHandler
+	public void onChat(ChatEvent event) {
+		ProxiedPlayer sender = (ProxiedPlayer) event.getSender();
+		for (ProxiedPlayer pp : getProxy().getPlayers()) {
+			if (pp.hasPermission("rezxis.admin") && inspection.contains(pp.getUniqueId())) {
+				pp.sendMessage(new TextComponent(ChatColor.GRAY + "[Insp] " + sender.getName() + " (" + sender.getServer().getInfo().getName() + "): " + event.getMessage()));
+			}
+		}
 	}
 	
 	@EventHandler

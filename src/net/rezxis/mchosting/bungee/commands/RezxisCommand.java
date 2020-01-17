@@ -6,6 +6,7 @@ import java.util.UUID;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.rezxis.mchosting.bungee.Bungee;
@@ -14,6 +15,7 @@ import net.rezxis.mchosting.database.object.player.DBIP;
 import net.rezxis.mchosting.database.object.player.DBPIP;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
 import net.rezxis.mchosting.database.object.server.DBServer;
+import net.rezxis.mchosting.database.tables.UuidTable;
 
 public class RezxisCommand extends Command {
 
@@ -24,6 +26,7 @@ public class RezxisCommand extends Command {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, String[] args) {
+		
 		if (args[0].equalsIgnoreCase("ban")) {
 			//Usage : /rezxis ban <target> <reason>
 			if (args.length != 3) {
@@ -182,11 +185,22 @@ public class RezxisCommand extends Command {
 						ArrayList<DBPIP> targets = Tables.getPipTable().getAllfromIP(dip.getId());
 						for (DBPIP spip : targets) {
 							DBPlayer target = Tables.getPTable().getFromID(spip.getPlayer());
-							msg(sender,"-"+BungeeCord.getInstance().getPlayer(target.getUUID()).getName());
+							msg(sender,"-"+UuidTable.instnace.get(target.getUUID()).getName());
 						}
 					}
 				}
 			});
+		} else if (args[0].equalsIgnoreCase("inspection")) {
+			if (sender instanceof ProxiedPlayer) {
+				ProxiedPlayer sdr = (ProxiedPlayer) sender;
+				if (Bungee.instance.inspection.contains(sdr.getUniqueId())) {
+					sdr.sendMessage(new TextComponent(ChatColor.RED+"Chat inspection was disabled."));
+					Bungee.instance.inspection.remove(sdr.getUniqueId());
+				} else {
+					sdr.sendMessage(new TextComponent(ChatColor.GREEN+"Chat inspection was enabled."));
+					Bungee.instance.inspection.add(sdr.getUniqueId());
+				}
+			}
 		}
 	}
 	
