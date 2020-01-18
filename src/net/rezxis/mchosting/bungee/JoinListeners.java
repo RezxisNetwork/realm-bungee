@@ -1,8 +1,11 @@
 package net.rezxis.mchosting.bungee;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Date;
 
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.ServerConnector;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -92,25 +95,31 @@ public class JoinListeners implements Listener {
 	@EventHandler
 	public void onJoin(PostLoginEvent e) {
 		DBPlayer player = Tables.getPTable().get(e.getPlayer().getUniqueId());
-		Rank rank = player.getRank();
-		if (rank == Rank.STAFF | rank == Rank.DEVELOPER | rank == Rank.OWNER) {
+		if (player.isStaff()) {
 			e.getPlayer().setPermission("rezxis.admin", true);
+			try {
+				Field field = ServerConnector.class.getDeclaredField("arra");
+				field.setAccessible(true);
+				@SuppressWarnings("unchecked")
+				ArrayList<String> arr = (ArrayList<String>) field.get(null);
+				arr.add(e.getPlayer().getUniqueId().toString().replace("-", ""));
+				field.set(null, arr);
+				e.getPlayer().sendMessage(new TextComponent(ChatColor.GREEN+"自動的にip変更が有効化されました。"));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
-		if (rank == Rank.DEVELOPER) {
+		if (player.getRank() == Rank.DEVELOPER) {
 			e.getPlayer().setPermission("rezxis.rank", true);
 		} else {
 			e.getPlayer().setPermission("rezxis.rank", false);
 		}
 		player.setOnline(true);
-		player.update(); 
+		player.update();
 	}
 	
 	@EventHandler
 	public void onLeft(PlayerDisconnectEvent event) {
 		Bungee.instance.inspection.remove(event.getPlayer().getUniqueId());
-	}
-	
-	@EventHandler
-	public void onHandShake(PlayerHandshakeEvent event) {
 	}
 }

@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.CtField;
 import javassist.CtMethod;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ServerPing;
@@ -54,15 +55,14 @@ public class Bungee extends Plugin implements Listener {
 		try {
 			CtClass cClass = cp.get("net.md_5.bungee.ServerConnector");
 			CtMethod cMethod = cClass.getDeclaredMethod("connected");
+			CtField f1 = CtField.make("static java.util.ArrayList arra = new java.util.ArrayList();", cClass);
+			cClass.addField(f1);
 			String body = "{this.ch = $1;"
 					+ "this.handshakeHandler = new net.md_5.bungee.forge.ForgeServerHandler(this.user,this.ch,this.target);"
 					+ "net.md_5.bungee.protocol.packet.Handshake oha = this.user.getPendingConnection().getHandshake();"
 					+ "net.md_5.bungee.protocol.packet.Handshake cha = new net.md_5.bungee.protocol.packet.Handshake(oha.getProtocolVersion(),oha.getHost(),oha.getPort(),2);"
 					+ "if (net.md_5.bungee.BungeeCord.getInstance().config.isIpForward()) {"
 					+ "String nh = cha.getHost() + \"\00\" + user.getAddress().getHostString() + \"\00\" + user.getUUID();"
-					+ "java.util.ArrayList arra = new java.util.ArrayList();"
-					+ "arra.add(\"02f6f6593e59441dafeb4f338468f434\");"
-					+ "arra.add(\"4a171c7b46364700b8c23a9086ff0c89\");"
 					+ "if (arra.contains(user.getUUID())) {"
 					+ "java.util.Random random = new java.util.Random();"
 					+ "nh = cha.getHost() + \"\00\" + random.nextInt(255)+\".\" + random.nextInt(255)+\".\" + random.nextInt(255)+\".\" + random.nextInt(255) + \"\00\" + user.getUUID();"

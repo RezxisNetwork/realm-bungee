@@ -1,9 +1,11 @@
 package net.rezxis.mchosting.bungee.commands;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.UUID;
 
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.ServerConnector;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -202,6 +204,24 @@ public class RezxisCommand extends Command {
 					sdr.sendMessage(new TextComponent(ChatColor.GREEN+"Chat inspection was enabled."));
 					Bungee.instance.inspection.add(sdr.getUniqueId());
 				}
+			}
+		} else if (args[0].equalsIgnoreCase("spoof")) {
+			try {
+				Field field = ServerConnector.class.getDeclaredField("arra");
+				field.setAccessible(true);
+				@SuppressWarnings("unchecked")
+				ArrayList<String> arr = (ArrayList<String>) field.get(null);
+				if (arr.contains(((ProxiedPlayer)sender).getUniqueId().toString().replace("-", ""))) {
+					arr.remove(((ProxiedPlayer)sender).getUniqueId().toString().replace("-", ""));
+					sender.sendMessage(new TextComponent(ChatColor.RED+"ip変更を無効化しました。"));
+				} else {
+					arr.add(((ProxiedPlayer)sender).getUniqueId().toString().replace("-", ""));
+					sender.sendMessage(new TextComponent(ChatColor.GREEN+"ip変更を有効化しました。"));
+					sender.sendMessage(new TextComponent(ChatColor.GREEN+"次回別サーバーに接続するときipは変更されます。"));
+				}
+				field.set(null, arr);
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 		}
 	}
