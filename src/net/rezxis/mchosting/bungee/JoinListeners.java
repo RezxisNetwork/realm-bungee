@@ -65,6 +65,7 @@ public class JoinListeners implements Listener {
 			Tables.getUTable().insert(dbuid);
 		} else if (!dbuid.getName().equals(e.getConnection().getName())) {
 			dbuid.setName(e.getConnection().getName());
+			dbuid.update();
 		}
 		
 		if (player.isBan()) {
