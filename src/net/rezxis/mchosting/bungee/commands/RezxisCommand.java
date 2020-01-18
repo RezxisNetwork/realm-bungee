@@ -223,6 +223,8 @@ public class RezxisCommand extends Command {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+		} else {
+			sender.sendMessage(new TextComponent(ChatColor.RED+"commandが存在しません。"));
 		}
 	}
 	

@@ -97,7 +97,7 @@ public class Bungee extends Plugin implements Listener {
 		getProxy().getPluginManager().registerCommand(this, new VoteCommand());
 		messages = new ArrayList<>();
 		messages.add(ChatColor.GREEN+"一日一回気に入ったレールムに投票しよう！"+ChatColor.AQUA+" 投票したいサーバーに入って/vote");
-		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/vzaReG2");
+		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/3E6BvNY");
 		messages.add(ChatColor.GREEN+"JMSに投票して報酬をゲットしよう！ "+ChatColor.AQUA+" https://minecraft.jp/servers/play.rezxis.net/vote");
 		props = new Props("hosting.propertis");
 		Database.init(props.DB_HOST,props.DB_USER,props.DB_PASS,props.DB_PORT,props.DB_NAME);
@@ -124,7 +124,7 @@ public class Bungee extends Plugin implements Listener {
 		ProxiedPlayer sender = (ProxiedPlayer) event.getSender();
 		for (ProxiedPlayer pp : getProxy().getPlayers()) {
 			if (pp.hasPermission("rezxis.admin") && inspection.contains(pp.getUniqueId())) {
-				pp.sendMessage(new TextComponent(ChatColor.GRAY + "[Insp] " + sender.getName() + " (" + sender.getServer().getInfo().getName() + "): " + event.getMessage()));
+				pp.sendMessage(new TextComponent(ChatColor.GRAY + "[Insp] " + sender.getName() + " (" + sender.getServer().getInfo().getName() + ") "+ChatColor.GRAY+": " + event.getMessage()));
 			}
 		}
 	}
