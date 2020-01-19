@@ -103,8 +103,10 @@ public class JoinListeners implements Listener {
 				field.setAccessible(true);
 				@SuppressWarnings("unchecked")
 				ArrayList<String> arr = (ArrayList<String>) field.get(null);
-				arr.add(e.getPlayer().getUniqueId().toString().replace("-", ""));
-				field.set(null, arr);
+				if (!arr.contains(e.getPlayer().getUniqueId())) {
+					arr.add(e.getPlayer().getUniqueId().toString().replace("-", ""));
+					field.set(null, arr);
+				}
 				e.getPlayer().sendMessage(new TextComponent(ChatColor.GREEN+"自動的にip変更が有効化されました。"));
 			} catch (Exception ex) {
 				ex.printStackTrace();
