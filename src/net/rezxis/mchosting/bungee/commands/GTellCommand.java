@@ -17,7 +17,7 @@ public class GTellCommand extends Command {
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		if (args.length == 0) {
+		if (args.length >= 3) {
 			sender.sendMessage(new TextComponent(ChatColor.RED+"Usage : /gtell <target> <message>"));
 			return;
 		}
@@ -25,7 +25,12 @@ public class GTellCommand extends Command {
 		if (player != null && player.isConnected()) {
 			String s = sender.getName();
 			String message = "";
-			player.sendMessage(new TextComponent(prefix+"["+s+"->"+player.getName()+"]"));
+			for (int i = 2; i < args.length; i++) {
+				message += args[i];
+			}
+			TextComponent comp = new TextComponent(prefix+"["+s+"->"+player.getName()+"]"+message);
+			sender.sendMessage(comp);
+			player.sendMessage(comp);
 		} else {
 			sender.sendMessage(new TextComponent(prefix+ChatColor.RED+"指定されたプレイヤーはオフラインです。"));
 		}

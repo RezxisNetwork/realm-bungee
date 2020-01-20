@@ -4,8 +4,10 @@ import java.io.IOException;
 
 import com.google.gson.Gson;
 
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class WebAPI {
@@ -22,6 +24,14 @@ public class WebAPI {
 		Response response = client.newCall(new Request.Builder().url(url).get().build()).execute();
 		McuaResponse rs = gson.fromJson(response.body().string(), McuaResponse.class);
 		return rs;
+	}
+	
+	public static void webhook(String name, String contents) throws IOException {
+		String url = "https://discordapp.com/api/webhooks/668590844609167363/lhRTzgcVulx2ulTyg-RRjcL8kxhEJ1tD4qz50DRzr_Vm9O5npXSOaBjT_d1IuVy5MvtA";
+		@SuppressWarnings("deprecation")
+		Request request = new Request.Builder().url(url).addHeader("User-Agent", "Rezxis")
+				.post(RequestBody.create(MediaType.parse("application/JSON; charset=utf-8"), new Gson().toJson(new DiscordWebHookRequest(name,"https://i.gyazo.com/141e75149b5cfe462af38d922027043f.png",contents)))).build();
+		client.newCall(request).execute();
 	}
 	
 	public class McuaResponse {

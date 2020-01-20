@@ -141,9 +141,11 @@ public class RezxisCommand extends Command {
 			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
 				public void run() {
 					UUID uuid;
+					boolean flag = true;
 					if (BungeeCord.getInstance().getPlayer(args[1]) != null) {
 						if (BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
 							uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
+							flag = true;
 						} else {
 							uuid = Tables.getUTable().get(args[1]).getUuid();
 						}
@@ -158,6 +160,8 @@ public class RezxisCommand extends Command {
 					}
 					msg(sender,"Status - "+args[1]);
 					msg(sender,ChatColor.RED+"General Status");
+					if (flag)
+						msg(sender,"Connected to : "+BungeeCord.getInstance().getPlayer(args[1]).getServer().getInfo().getName());
 					msg(sender,"ID : "+player.getId());
 					msg(sender,"UUID : "+uuid.toString());
 					msg(sender,"Rank : "+player.getRank().name());
