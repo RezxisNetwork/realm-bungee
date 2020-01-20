@@ -24,22 +24,24 @@ public class ReportCommand extends Command {
 			return;
 		}
 		String message = "";
-		for (int i = 1; i < args.length; i++) {
+		for (int i = 0; i < args.length; i++) {
 			message += args[i];
 		}
 		for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
 			if (pp.hasPermission("rezxis.admin"))
-				pp.sendMessage(new TextComponent(ChatColor.GREEN+"[REPORT] - "+sender.getName()+" : "+message));
+				pp.sendMessage(new TextComponent(ChatColor.GRAY+"[REPORT] - "+ChatColor.RED+sender.getName()+"("+((ProxiedPlayer)sender).getServer().getInfo().getName()+") : "+message));
 		}
 		final String fmsg = message;
 		BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
 			public void run() {
 				try {
-					WebAPI.webhook("Rezxis-Reports", "[REPORT] - "+sender.getName()+" : "+fmsg);
+					WebAPI.webhook("Rezxis-Reports", "[REPORT] - "+sender.getName()+"("+((ProxiedPlayer)sender).getServer().getInfo().getName()+") : "+fmsg);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		});
+		sender.sendMessage(new TextComponent(ChatColor.GREEN+"レポートが完了しました。"));
+		sender.sendMessage(new TextComponent(ChatColor.GREEN+"内容 : "+message));
 	}
 }

@@ -79,10 +79,9 @@
 	</dependency>
 	<dependency>
     	<artifactId>BungeeCord</artifactId>
-    	<groupId>BungeeCord</groupId>
+    	<groupId>rezxis</groupId>
     	<version>0</version>
-    	<scope>system</scope>
-    	<systemPath>${basedir}/BungeeCord.jar</systemPath>
+    	<scope>provided</scope>
 	</dependency>
   </dependencies>
 </project>

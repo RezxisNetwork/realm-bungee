@@ -17,16 +17,16 @@ public class GTellCommand extends Command {
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		if (args.length >= 3) {
+		if (args.length < 2) {
 			sender.sendMessage(new TextComponent(ChatColor.RED+"Usage : /gtell <target> <message>"));
 			return;
 		}
-		ProxiedPlayer player = BungeeCord.getInstance().getPlayer(args[1]);
+		ProxiedPlayer player = BungeeCord.getInstance().getPlayer(args[0]);
 		if (player != null && player.isConnected()) {
 			String s = sender.getName();
 			String message = "";
-			for (int i = 2; i < args.length; i++) {
-				message += args[i];
+			for (int i = 1; i < args.length; i++) {
+				message += " "+args[i];
 			}
 			TextComponent comp = new TextComponent(prefix+"["+s+"->"+player.getName()+"]"+message);
 			sender.sendMessage(comp);
