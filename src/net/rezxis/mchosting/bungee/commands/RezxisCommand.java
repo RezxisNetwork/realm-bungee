@@ -141,16 +141,18 @@ public class RezxisCommand extends Command {
 			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
 				public void run() {
 					UUID uuid;
-					boolean flag = true;
 					if (BungeeCord.getInstance().getPlayer(args[1]) != null) {
 						if (BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
 							uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
-							flag = true;
 						} else {
 							uuid = Tables.getUTable().get(args[1]).getUuid();
 						}
 					} else {
 						uuid = Tables.getUTable().get(args[1]).getUuid();
+					}
+					if (uuid == null) {
+						sender.sendMessage(ChatColor.RED+args[1]+" doesn't exisst!");
+						return;
 					}
 					DBPlayer player = Tables.getPTable().get(uuid);
 					DBServer server = Tables.getSTable().get(uuid);
@@ -160,7 +162,7 @@ public class RezxisCommand extends Command {
 					}
 					msg(sender,"Status - "+args[1]);
 					msg(sender,ChatColor.RED+"General Status");
-					if (flag)
+					if (BungeeCord.getInstance().getPlayer(args[1]) != null && BungeeCord.getInstance().getPlayer(args[1]).isConnected())
 						msg(sender,"Connected to : "+BungeeCord.getInstance().getPlayer(args[1]).getServer().getInfo().getName());
 					msg(sender,"ID : "+player.getId());
 					msg(sender,"UUID : "+uuid.toString());

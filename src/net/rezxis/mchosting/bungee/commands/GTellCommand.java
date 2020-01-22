@@ -28,6 +28,7 @@ public class GTellCommand extends Command {
 			for (int i = 1; i < args.length; i++) {
 				message += " "+args[i];
 			}
+			message = message.replace("&", "§");
 			TextComponent comp = new TextComponent(prefix+"["+s+"->"+player.getName()+"]"+message);
 			sender.sendMessage(comp);
 			player.sendMessage(comp);

@@ -11,7 +11,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.PlayerHandshakeEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -103,7 +102,7 @@ public class JoinListeners implements Listener {
 				field.setAccessible(true);
 				@SuppressWarnings("unchecked")
 				ArrayList<String> arr = (ArrayList<String>) field.get(null);
-				if (!arr.contains(e.getPlayer().getUniqueId())) {
+				if (!arr.contains(e.getPlayer().getUniqueId().toString().replace("-", ""))) {
 					arr.add(e.getPlayer().getUniqueId().toString().replace("-", ""));
 					field.set(null, arr);
 				}
