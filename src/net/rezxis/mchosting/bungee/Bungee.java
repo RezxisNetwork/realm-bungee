@@ -1,9 +1,21 @@
 package net.rezxis.mchosting.bungee;
 
 import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.http.HttpHost;
+import org.elasticsearch.action.ActionListener;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -52,6 +64,25 @@ public class Bungee extends Plugin implements Listener {
 	public int min = 15;
 	public ArrayList<String> messages = new ArrayList<>();
 	public ArrayList<UUID> inspection = new ArrayList<>();
+	public RestHighLevelClient rcl = null;
+	private static final RequestOptions COMMON_OPTIONS;
+	private static ActionListener<IndexResponse> listener = new ActionListener<IndexResponse>() {
+        @Override
+        public void onResponse(IndexResponse indexResponse) {
+            return;
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            e.printStackTrace();
+        }
+    };
+    
+    static {
+        RequestOptions.Builder build = RequestOptions.DEFAULT.toBuilder();
+        build.addHeader("Authorization", "Basic cmV6eGlzOktudFN5a3JsWHlBY1B0T0o=");
+        COMMON_OPTIONS = build.build();
+    }
 	
 	public void onLoad() {
 		ClassPool cp = ClassPool.getDefault();
@@ -91,6 +122,7 @@ public class Bungee extends Plugin implements Listener {
 	
 	public void onEnable() {
 		instance = this;
+		rcl = new RestHighLevelClient(RestClient.builder(new HttpHost("96.44.162.140",9200,"http")));
 		getProxy().getPluginManager().registerCommand(this, new RezxisCommand());
 		getProxy().getPluginManager().registerCommand(this, new PayCommand());
 		getProxy().getPluginManager().registerCommand(this, new HubCommand());
@@ -137,6 +169,25 @@ public class Bungee extends Plugin implements Listener {
 				pp.sendMessage(new TextComponent(ChatColor.GRAY + "[Insp] " + sender.getName() + " (" + sender.getServer().getInfo().getName() + ") "+ChatColor.GRAY+": " + event.getMessage()));
 			}
 		}
+        try {
+        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            sdf.setTimeZone(TimeZone.getTimeZone("JST"));
+            XContentBuilder builder = XContentFactory.jsonBuilder();
+            builder.startObject();
+            {
+                builder.timeField("timestamp", sdf.format(System.currentTimeMillis()));
+                builder.field("player", ((ProxiedPlayer)event.getSender()).getName());
+                builder.field("server", ((ProxiedPlayer)event.getSender()).getServer().getInfo().getName());
+                builder.field("content", event.getMessage());
+                builder.field("ip", ((ProxiedPlayer)event.getSender()).getAddress().getAddress().getHostAddress());
+                builder.field("message", ((ProxiedPlayer)event.getSender()).getName() + " (" + ((ProxiedPlayer)event.getSender()).getServer().getInfo().getName() + "): " + event.getMessage());
+            }
+            builder.endObject();
+            IndexRequest request = new IndexRequest("inspection").source(builder);
+            rcl.indexAsync(request, COMMON_OPTIONS, listener);
+        } catch (Exception ex) {
+        	ex.printStackTrace();
+        }
 	}
 	
 	@EventHandler
