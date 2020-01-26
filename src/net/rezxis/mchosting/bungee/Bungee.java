@@ -17,6 +17,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
@@ -49,8 +50,8 @@ public class Bungee extends Plugin implements Listener {
 	public WSClient ws;
 	public Props props;
 	public int min = 15;
-	public ArrayList<String> messages;
-	public ArrayList<UUID> inspection;
+	public ArrayList<String> messages = new ArrayList<>();
+	public ArrayList<UUID> inspection = new ArrayList<>();
 	
 	public void onLoad() {
 		ClassPool cp = ClassPool.getDefault();
@@ -99,7 +100,6 @@ public class Bungee extends Plugin implements Listener {
 		getProxy().getPluginManager().registerCommand(this, new VoteCommand());
 		getProxy().getPluginManager().registerCommand(this, new GTellCommand());
 		getProxy().getPluginManager().registerCommand(this, new ReportCommand());
-		messages = new ArrayList<>();
 		messages.add(ChatColor.GREEN+"一日一回気に入ったレールムに投票しよう！"+ChatColor.AQUA+" 投票したいサーバーに入って/vote");
 		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/3E6BvNY");
 		messages.add(ChatColor.GREEN+"JMSに投票して報酬をゲットしよう！ "+ChatColor.AQUA+" https://minecraft.jp/servers/play.rezxis.net/vote");
@@ -120,10 +120,13 @@ public class Bungee extends Plugin implements Listener {
 				ws.connect();
 			
 		}).start();
-		
-		inspection = new ArrayList<>();
 		this.getProxy().getScheduler().schedule(this, new AnnounceTask(), 1, min, TimeUnit.MINUTES);
 		this.getProxy().getScheduler().schedule(this, new RewardTask(), 1, 15, TimeUnit.MINUTES);
+	}
+	
+	@EventHandler
+    public void onPM(PluginMessageEvent event) {
+		
 	}
 	
 	@EventHandler
@@ -182,7 +185,6 @@ public class Bungee extends Plugin implements Listener {
 		player.update();
 	}
 	
-	@SuppressWarnings("deprecation")
 	@EventHandler
     public void onServerKickEvent(ServerKickEvent ev) {
 		Server server = ev.getPlayer().getServer();
@@ -191,7 +193,7 @@ public class Bungee extends Plugin implements Listener {
 		if (!server.getInfo().getName().equalsIgnoreCase("lobby")) {
 			ev.setCancelled(true);
 			ev.setCancelServer(getProxy().getServerInfo("lobby"));
-			ev.getPlayer().sendMessage(ev.getKickReason());
+			ev.getPlayer().sendMessage(new TextComponent(ev.getKickReasonComponent()));
 		}
 	}
 }

@@ -83,5 +83,10 @@
     	<version>0</version>
     	<scope>provided</scope>
 	</dependency>
+	 <dependency>
+ 		<groupId>org.elasticsearch.client</groupId>
+		<artifactId>elasticsearch-rest-high-level-client</artifactId>
+ 		<version>7.1.1</version>
+	</dependency>
   </dependencies>
 </project>

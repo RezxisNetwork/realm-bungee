@@ -10,6 +10,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.rezxis.mchosting.bungee.Bungee;
 import net.rezxis.mchosting.bungee.WebAPI;
+import net.rezxis.mchosting.bungee.WebAPI.DiscordWebHookEnum;
 
 public class ReportCommand extends Command {
 
@@ -35,7 +36,7 @@ public class ReportCommand extends Command {
 		BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
 			public void run() {
 				try {
-					WebAPI.webhook("Rezxis-Reports", "[REPORT] - "+sender.getName()+"("+((ProxiedPlayer)sender).getServer().getInfo().getName()+") : "+fmsg);
+					WebAPI.webhook(DiscordWebHookEnum.REPORT, "[REPORT] - "+sender.getName()+"("+((ProxiedPlayer)sender).getServer().getInfo().getName()+") : "+fmsg);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

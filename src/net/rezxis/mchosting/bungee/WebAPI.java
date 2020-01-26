@@ -26,12 +26,24 @@ public class WebAPI {
 		return rs;
 	}
 	
-	public static void webhook(String name, String contents) throws IOException {
-		String url = "https://discordapp.com/api/webhooks/668590844609167363/lhRTzgcVulx2ulTyg-RRjcL8kxhEJ1tD4qz50DRzr_Vm9O5npXSOaBjT_d1IuVy5MvtA";
+	public static void webhook(DiscordWebHookEnum en, String contents) throws IOException {
 		@SuppressWarnings("deprecation")
-		Request request = new Request.Builder().url(url).addHeader("User-Agent", "Rezxis")
-				.post(RequestBody.create(MediaType.parse("application/JSON; charset=utf-8"), new Gson().toJson(new DiscordWebHookRequest(name,"https://i.gyazo.com/141e75149b5cfe462af38d922027043f.png",contents)))).build();
+		Request request = new Request.Builder().url(en.url).addHeader("User-Agent", "Rezxis")
+				.post(RequestBody.create(MediaType.parse("application/JSON; charset=utf-8"), new Gson().toJson(new DiscordWebHookRequest(en.name,"https://i.gyazo.com/141e75149b5cfe462af38d922027043f.png",contents)))).build();
 		client.newCall(request).execute();
+	}
+	
+	public enum DiscordWebHookEnum {
+		REPORT("https://discordapp.com/api/webhooks/668590844609167363/lhRTzgcVulx2ulTyg-RRjcL8kxhEJ1tD4qz50DRzr_Vm9O5npXSOaBjT_d1IuVy5MvtA","rezxis-reports"),
+		CONNECT("https://discordapp.com/api/webhooks/669826084996644886/_TC052RlfcIa7HKnCjXKYgj8zoSgpXLmTyZSwudjRarq2U7kDjzuuUMxItbtO_yIjO3s","rezxis-connections"),
+		PUNISHMENT("https://discordapp.com/api/webhooks/669483547530231819/Ok5j3TdC7iosol4DLW1l_DVJY6op9nJcW_XYyqDyqItv1hmuTxpY6tg1C88hZKvGdrUT","rezxis-punishments");
+		String url;
+		String name;
+		
+		DiscordWebHookEnum(String url, String name) {
+			this.url = url;
+			this.name = name;
+		}
 	}
 	
 	public class McuaResponse {

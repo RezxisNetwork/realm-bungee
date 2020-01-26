@@ -1,5 +1,6 @@
 package net.rezxis.mchosting.bungee;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +15,7 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.rezxis.mchosting.bungee.WebAPI.DiscordWebHookEnum;
 import net.rezxis.mchosting.bungee.WebAPI.McuaResponse;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBIP;
@@ -31,13 +33,17 @@ public class JoinListeners implements Listener {
 		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
 		
 		//check multi connection;
+		int accs = 0;
 		for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
 			if (!pp.getUniqueId().equals(e.getConnection().getUniqueId())) {
 				if (pp.getAddress().getHostString().equals(ip)) {
-					e.setCancelled(true);
-					e.setCancelReason(new TextComponent(ChatColor.RED+"同時接続はできません。"));
+					accs += 1;
 				}
 			}
+		}
+		if (accs >= 5) {
+			e.setCancelled(true);
+			e.setCancelReason(new TextComponent(ChatColor.RED+"同時接続はできません。"));
 		}
 		if (player == null) {
 			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), new Date(), true, false ,"",false,false,new Date(),"",0);
@@ -48,8 +54,18 @@ public class JoinListeners implements Listener {
 				public void run() {
 					try {
 						McuaResponse response = WebAPI.checkIP(ip);
-						if (response.isBad()) {
+						if (response.isBad() || !response.getCountry().equalsIgnoreCase("JP")) {
 							BungeeCord.getInstance().getPlayer(e.getConnection().getUniqueId()).disconnect(new TextComponent(ChatColor.RED+"あなたのIPアドレスはブロックされています。"));
+							String msg = "[VPN] - username : ("+e.getConnection().getName()+") , Address : ("+ip+") , Type : ("+response.getType()+") , Country : ("+response.getCountry()+")";
+							for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
+								if (pp.hasPermission("rezxis.admin"))
+									pp.sendMessage(new TextComponent(ChatColor.RED+msg));
+							}
+							try {
+								WebAPI.webhook(DiscordWebHookEnum.CONNECT, msg);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 							return;
 						}
 					} catch (Exception ex) {
