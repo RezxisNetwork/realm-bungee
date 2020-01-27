@@ -23,6 +23,7 @@ public class WebAPI {
 		String url = "https://api.mcua.net/checkip/"+ip;
 		Response response = client.newCall(new Request.Builder().url(url).get().build()).execute();
 		McuaResponse rs = gson.fromJson(response.body().string(), McuaResponse.class);
+		response.close();
 		return rs;
 	}
 	
@@ -30,7 +31,8 @@ public class WebAPI {
 		@SuppressWarnings("deprecation")
 		Request request = new Request.Builder().url(en.url).addHeader("User-Agent", "Rezxis")
 				.post(RequestBody.create(MediaType.parse("application/JSON; charset=utf-8"), new Gson().toJson(new DiscordWebHookRequest(en.name,"https://i.gyazo.com/141e75149b5cfe462af38d922027043f.png",contents)))).build();
-		client.newCall(request).execute();
+		Response response = client.newCall(request).execute();
+		response.close();
 	}
 	
 	public enum DiscordWebHookEnum {

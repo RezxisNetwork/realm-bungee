@@ -40,7 +40,7 @@ public class WSClientHandler implements ClientHandler {
 		PacketType type = packet.type;
 		if (type == PacketType.ServerStarted) {
 			BungServerStarted signal = gson.fromJson(message, BungServerStarted.class);
-			if (signal.ip.equalsIgnoreCase("127.0.0.1")) {
+			if (signal.ip.equalsIgnoreCase("127.0.0.1") && Bungee.instance.props.REPLACE) {
 				signal.ip = "172.18.0.1";
 				System.out.println("replaced");
 			}

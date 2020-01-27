@@ -66,6 +66,7 @@ public class Bungee extends Plugin implements Listener {
 	public ArrayList<UUID> inspection = new ArrayList<>();
 	public RestHighLevelClient rcl = null;
 	private static final RequestOptions COMMON_OPTIONS;
+	
 	private static ActionListener<IndexResponse> listener = new ActionListener<IndexResponse>() {
         @Override
         public void onResponse(IndexResponse indexResponse) {

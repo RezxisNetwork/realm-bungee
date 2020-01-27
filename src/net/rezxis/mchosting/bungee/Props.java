@@ -19,6 +19,7 @@ public class Props {
 	public final String DB_USER;
 	public final String DB_PASS;
 	public final String DB_PORT;
+	public final boolean REPLACE;
 	
 	final Properties prop=new Properties();
 	public Props(String fname) {
@@ -42,5 +43,6 @@ public class Props {
         DB_PASS=prop.getProperty("db_pass");
         DB_PORT=prop.getProperty("db_port");
         DB_NAME=prop.getProperty("db_name");
+        REPLACE=Boolean.valueOf(prop.getProperty("replace"));
 	}
 }
