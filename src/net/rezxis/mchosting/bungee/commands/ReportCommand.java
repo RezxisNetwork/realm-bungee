@@ -6,8 +6,8 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-import net.rezxis.mchosting.bungee.WebAPI;
-import net.rezxis.mchosting.bungee.WebAPI.DiscordWebHookEnum;
+import net.rezxis.utils.WebAPI;
+import net.rezxis.utils.WebAPI.DiscordWebHookEnum;
 
 public class ReportCommand extends Command {
 

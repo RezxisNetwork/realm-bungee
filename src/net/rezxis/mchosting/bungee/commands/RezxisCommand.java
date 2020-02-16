@@ -13,8 +13,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.rezxis.mchosting.bungee.Bungee;
-import net.rezxis.mchosting.bungee.WebAPI;
-import net.rezxis.mchosting.bungee.WebAPI.DiscordWebHookEnum;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBIP;
 import net.rezxis.mchosting.database.object.player.DBPIP;
@@ -22,6 +20,8 @@ import net.rezxis.mchosting.database.object.player.DBPlayer;
 import net.rezxis.mchosting.database.object.player.DBUUID;
 import net.rezxis.mchosting.database.object.server.DBServer;
 import net.rezxis.mchosting.database.tables.UuidTable;
+import net.rezxis.utils.WebAPI;
+import net.rezxis.utils.WebAPI.DiscordWebHookEnum;
 
 public class RezxisCommand extends Command {
 

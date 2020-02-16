@@ -15,13 +15,14 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.rezxis.mchosting.bungee.WebAPI.DiscordWebHookEnum;
-import net.rezxis.mchosting.bungee.WebAPI.McuaResponse;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBIP;
 import net.rezxis.mchosting.database.object.player.DBPIP;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
 import net.rezxis.mchosting.database.object.player.DBUUID;
+import net.rezxis.utils.WebAPI;
+import net.rezxis.utils.WebAPI.DiscordWebHookEnum;
+import net.rezxis.utils.WebAPI.McuaResponse;
 import net.rezxis.mchosting.database.object.player.DBPlayer.Rank;
 
 public class JoinListeners implements Listener {
