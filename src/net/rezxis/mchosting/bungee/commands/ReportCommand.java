@@ -1,14 +1,11 @@
 package net.rezxis.mchosting.bungee.commands;
 
-import java.io.IOException;
-
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-import net.rezxis.mchosting.bungee.Bungee;
 import net.rezxis.mchosting.bungee.WebAPI;
 import net.rezxis.mchosting.bungee.WebAPI.DiscordWebHookEnum;
 
@@ -33,15 +30,7 @@ public class ReportCommand extends Command {
 				pp.sendMessage(new TextComponent(ChatColor.GRAY+"[REPORT] - "+ChatColor.RED+sender.getName()+"("+((ProxiedPlayer)sender).getServer().getInfo().getName()+") : "+message));
 		}
 		final String fmsg = message;
-		BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
-			public void run() {
-				try {
-					WebAPI.webhook(DiscordWebHookEnum.REPORT, "[REPORT] - "+sender.getName()+"("+((ProxiedPlayer)sender).getServer().getInfo().getName()+") : "+fmsg);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		WebAPI.webhook(DiscordWebHookEnum.REPORT, "[REPORT] - "+sender.getName()+"("+((ProxiedPlayer)sender).getServer().getInfo().getName()+") : "+fmsg);
 		sender.sendMessage(new TextComponent(ChatColor.GREEN+"レポートが完了しました。"));
 		sender.sendMessage(new TextComponent(ChatColor.GREEN+"内容 : "+message));
 	}

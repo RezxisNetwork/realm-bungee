@@ -61,11 +61,7 @@ public class JoinListeners implements Listener {
 								if (pp.hasPermission("rezxis.admin"))
 									pp.sendMessage(new TextComponent(ChatColor.RED+msg));
 							}
-							try {
-								WebAPI.webhook(DiscordWebHookEnum.CONNECT, msg);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
+							WebAPI.webhook(DiscordWebHookEnum.CONNECT, msg);
 							return;
 						}
 					} catch (Exception ex) {

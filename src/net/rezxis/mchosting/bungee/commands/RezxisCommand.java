@@ -1,5 +1,6 @@
 package net.rezxis.mchosting.bungee.commands;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -12,6 +13,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.rezxis.mchosting.bungee.Bungee;
+import net.rezxis.mchosting.bungee.WebAPI;
+import net.rezxis.mchosting.bungee.WebAPI.DiscordWebHookEnum;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBIP;
 import net.rezxis.mchosting.database.object.player.DBPIP;
@@ -28,7 +31,6 @@ public class RezxisCommand extends Command {
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		
 		if (args[0].equalsIgnoreCase("ban")) {
 			//Usage : /rezxis ban <target> <reason>
 			if (args.length != 3) {
@@ -49,6 +51,7 @@ public class RezxisCommand extends Command {
 				dp.setBan(true);
 				dp.setReason(args[2]);
 				dp.update();
+				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("% was banned by % reason : %", args[1], sender.getName(), args[2]));
 			}
 		} else if (args[0].equalsIgnoreCase("ipban")) {
 			if (args.length != 3) {
@@ -65,6 +68,7 @@ public class RezxisCommand extends Command {
 					}
 					uuid = dbuid.getUuid();
 				}
+				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("% was banned by % reason : %", args[1], sender.getName(), args[2]));
 				DBPlayer dp = Tables.getPTable().get(uuid);
 				dp.setBan(true);
 				dp.setReason(ChatColor.RED+args[2]);
@@ -109,6 +113,7 @@ public class RezxisCommand extends Command {
 				sender.sendMessage(new TextComponent(ChatColor.RED+"Usage /rezxis unban <target>"));
 				return;
 			}
+			WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("% was unbanned by %", args[1], sender.getName()));
 			DBPlayer dp = Tables.getPTable().get(Tables.getUTable().get(args[1]).getUuid());
 			dp.setBan(false);
 			dp.setReason("");
@@ -234,6 +239,16 @@ public class RezxisCommand extends Command {
 				field.set(null, arr);
 			} catch (Exception ex) {
 				ex.printStackTrace();
+			}
+		} else if (args[0].equalsIgnoreCase("logging")) {
+			if (Bungee.instance.logging) {
+				sender.sendMessage(new TextComponent(ChatColor.RED+"Chat logを無効化しました。"));
+				Bungee.instance.logging = false;
+				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("ChatLog was disabled by %", sender.getName()));
+			} else {
+				sender.sendMessage(new TextComponent(ChatColor.GREEN+"Chat logを有効化しました。"));
+				Bungee.instance.logging = true;
+				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("ChatLog was enabled by %", sender.getName()));
 			}
 		} else {
 			sender.sendMessage(new TextComponent(ChatColor.RED+"commandが存在しません。"));

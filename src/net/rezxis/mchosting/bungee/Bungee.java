@@ -66,6 +66,7 @@ public class Bungee extends Plugin implements Listener {
 	public ArrayList<UUID> inspection = new ArrayList<>();
 	public RestHighLevelClient rcl = null;
 	private static final RequestOptions COMMON_OPTIONS;
+	public boolean logging = true;
 	
 	private static ActionListener<IndexResponse> listener = new ActionListener<IndexResponse>() {
         @Override
@@ -170,24 +171,26 @@ public class Bungee extends Plugin implements Listener {
 				pp.sendMessage(new TextComponent(ChatColor.GRAY + "[Insp] " + sender.getName() + " (" + sender.getServer().getInfo().getName() + ") "+ChatColor.GRAY+": " + event.getMessage()));
 			}
 		}
-        try {
-        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            sdf.setTimeZone(TimeZone.getTimeZone("JST"));
-            XContentBuilder builder = XContentFactory.jsonBuilder();
-            builder.startObject();
-            {
-                builder.timeField("timestamp", sdf.format(System.currentTimeMillis()));
-                builder.field("player", ((ProxiedPlayer)event.getSender()).getName());
-                builder.field("server", ((ProxiedPlayer)event.getSender()).getServer().getInfo().getName());
-                builder.field("content", event.getMessage());
-                builder.field("ip", ((ProxiedPlayer)event.getSender()).getAddress().getAddress().getHostAddress());
-                builder.field("message", ((ProxiedPlayer)event.getSender()).getName() + " (" + ((ProxiedPlayer)event.getSender()).getServer().getInfo().getName() + "): " + event.getMessage());
+        if (logging) {
+        	try {
+            	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                sdf.setTimeZone(TimeZone.getTimeZone("JST"));
+                XContentBuilder builder = XContentFactory.jsonBuilder();
+                builder.startObject();
+                {
+                    builder.timeField("timestamp", sdf.format(System.currentTimeMillis()));
+                    builder.field("player", ((ProxiedPlayer)event.getSender()).getName());
+                    builder.field("server", ((ProxiedPlayer)event.getSender()).getServer().getInfo().getName());
+                    builder.field("content", event.getMessage());
+                    builder.field("ip", ((ProxiedPlayer)event.getSender()).getAddress().getAddress().getHostAddress());
+                    builder.field("message", ((ProxiedPlayer)event.getSender()).getName() + " (" + ((ProxiedPlayer)event.getSender()).getServer().getInfo().getName() + "): " + event.getMessage());
+                }
+                builder.endObject();
+                IndexRequest request = new IndexRequest("inspection").source(builder);
+                rcl.indexAsync(request, COMMON_OPTIONS, listener);
+            } catch (Exception ex) {
+            	ex.printStackTrace();
             }
-            builder.endObject();
-            IndexRequest request = new IndexRequest("inspection").source(builder);
-            rcl.indexAsync(request, COMMON_OPTIONS, listener);
-        } catch (Exception ex) {
-        	ex.printStackTrace();
         }
 	}
 	
