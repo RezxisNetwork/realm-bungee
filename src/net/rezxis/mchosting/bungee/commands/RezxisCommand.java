@@ -16,6 +16,7 @@ import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBIP;
 import net.rezxis.mchosting.database.object.player.DBPIP;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
+import net.rezxis.mchosting.database.object.player.DBUUID;
 import net.rezxis.mchosting.database.object.server.DBServer;
 import net.rezxis.mchosting.database.tables.UuidTable;
 
@@ -34,14 +35,15 @@ public class RezxisCommand extends Command {
 				sender.sendMessage(new TextComponent(ChatColor.RED+"Usage /rezxis ban <target> <reason>"));
 			} else {
 				UUID uuid;
-				if (BungeeCord.getInstance().getPlayer(args[1]) == null) {
-					uuid = Tables.getUTable().get(args[1]).getUuid();
+				if (BungeeCord.getInstance().getPlayer(args[1]) != null && BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
+					uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
 				} else {
-					if (BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
-						uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
-					} else {
-						uuid = Tables.getUTable().get(args[1]).getUuid();
+					DBUUID dbuid = Tables.getUTable().get(args[1]);
+					if (dbuid == null) {
+						sender.sendMessage(new TextComponent(ChatColor.RED+"Couldn't find the player."));
+						return;
 					}
+					uuid = dbuid.getUuid();
 				}
 				DBPlayer dp = Tables.getPTable().get(uuid);
 				dp.setBan(true);
@@ -53,14 +55,15 @@ public class RezxisCommand extends Command {
 				sender.sendMessage(new TextComponent(ChatColor.RED+"Usage /rezxis ipban <target> <reason>"));
 			} else {
 				final UUID uuid;
-				if (BungeeCord.getInstance().getPlayer(args[1]) == null) {
-					uuid = Tables.getUTable().get(args[1]).getUuid();
+				if (BungeeCord.getInstance().getPlayer(args[1]) != null && BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
+					uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
 				} else {
-					if (BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
-						uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
-					} else {
-						uuid = Tables.getUTable().get(args[1]).getUuid();
+					DBUUID dbuid = Tables.getUTable().get(args[1]);
+					if (dbuid == null) {
+						sender.sendMessage(new TextComponent(ChatColor.RED+"Couldn't find the player."));
+						return;
 					}
+					uuid = dbuid.getUuid();
 				}
 				DBPlayer dp = Tables.getPTable().get(uuid);
 				dp.setBan(true);
@@ -143,14 +146,15 @@ public class RezxisCommand extends Command {
 				@SuppressWarnings("deprecation")
 				public void run() {
 					UUID uuid;
-					if (BungeeCord.getInstance().getPlayer(args[1]) != null) {
-						if (BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
-							uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
-						} else {
-							uuid = Tables.getUTable().get(args[1]).getUuid();
-						}
+					if (BungeeCord.getInstance().getPlayer(args[1]) != null && BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
+						uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
 					} else {
-						uuid = Tables.getUTable().get(args[1]).getUuid();
+						DBUUID dbuid = Tables.getUTable().get(args[1]);
+						if (dbuid == null) {
+							sender.sendMessage(new TextComponent(ChatColor.RED+"Couldn't find the player."));
+							return;
+						}
+						uuid = dbuid.getUuid();
 					}
 					if (uuid == null) {
 						sender.sendMessage(new TextComponent(ChatColor.RED+args[1]+" doesn't exisst!"));
