@@ -124,7 +124,7 @@ public class Bungee extends Plugin implements Listener {
 	
 	public void onEnable() {
 		instance = this;
-		rcl = new RestHighLevelClient(RestClient.builder(new HttpHost("96.44.162.140",9200,"http")));
+		rcl = new RestHighLevelClient(RestClient.builder(new HttpHost("nat.mcua.net",9200,"http")));
 		getProxy().getPluginManager().registerCommand(this, new RezxisCommand());
 		getProxy().getPluginManager().registerCommand(this, new PayCommand());
 		getProxy().getPluginManager().registerCommand(this, new HubCommand());

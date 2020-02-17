@@ -51,7 +51,7 @@ public class RezxisCommand extends Command {
 				dp.setBan(true);
 				dp.setReason(args[2]);
 				dp.update();
-				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("% was banned by % reason : %", args[1], sender.getName(), args[2]));
+				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("%s was banned by %s reason : %s", args[1], sender.getName(), args[2]));
 			}
 		} else if (args[0].equalsIgnoreCase("ipban")) {
 			if (args.length != 3) {
@@ -68,7 +68,7 @@ public class RezxisCommand extends Command {
 					}
 					uuid = dbuid.getUuid();
 				}
-				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("% was banned by % reason : %", args[1], sender.getName(), args[2]));
+				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("%s was banned by %s reason : %s", args[1], sender.getName(), args[2]));
 				DBPlayer dp = Tables.getPTable().get(uuid);
 				dp.setBan(true);
 				dp.setReason(ChatColor.RED+args[2]);
@@ -113,7 +113,7 @@ public class RezxisCommand extends Command {
 				sender.sendMessage(new TextComponent(ChatColor.RED+"Usage /rezxis unban <target>"));
 				return;
 			}
-			WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("% was unbanned by %", args[1], sender.getName()));
+			WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("%s was unbanned by %s", args[1], sender.getName()));
 			DBPlayer dp = Tables.getPTable().get(Tables.getUTable().get(args[1]).getUuid());
 			dp.setBan(false);
 			dp.setReason("");
@@ -244,11 +244,11 @@ public class RezxisCommand extends Command {
 			if (Bungee.instance.logging) {
 				sender.sendMessage(new TextComponent(ChatColor.RED+"Chat logを無効化しました。"));
 				Bungee.instance.logging = false;
-				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("ChatLog was disabled by %", sender.getName()));
+				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("ChatLog was disabled by %s", sender.getName()));
 			} else {
 				sender.sendMessage(new TextComponent(ChatColor.GREEN+"Chat logを有効化しました。"));
 				Bungee.instance.logging = true;
-				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("ChatLog was enabled by %", sender.getName()));
+				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("ChatLog was enabled by %s", sender.getName()));
 			}
 		} else {
 			sender.sendMessage(new TextComponent(ChatColor.RED+"commandが存在しません。"));
