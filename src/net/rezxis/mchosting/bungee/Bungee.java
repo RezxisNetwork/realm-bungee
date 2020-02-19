@@ -174,16 +174,21 @@ public class Bungee extends Plugin implements Listener {
         if (logging) {
         	try {
             	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                sdf.setTimeZone(TimeZone.getTimeZone("JST"));
+                sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
                 XContentBuilder builder = XContentFactory.jsonBuilder();
                 builder.startObject();
                 {
-                    builder.timeField("timestamp", sdf.format(System.currentTimeMillis()));
+                    builder.timeField("@timestamp", sdf.format(System.currentTimeMillis()));
                     builder.field("player", ((ProxiedPlayer)event.getSender()).getName());
                     builder.field("server", ((ProxiedPlayer)event.getSender()).getServer().getInfo().getName());
+                    
                     builder.field("content", event.getMessage());
-                    builder.field("ip", ((ProxiedPlayer)event.getSender()).getAddress().getAddress().getHostAddress());
                     builder.field("message", ((ProxiedPlayer)event.getSender()).getName() + " (" + ((ProxiedPlayer)event.getSender()).getServer().getInfo().getName() + "): " + event.getMessage());
+                    
+                    //builder.field("message", event.getMessage());
+                    builder.field("name", "inspection");
+                    
+                    builder.field("ip", ((ProxiedPlayer)event.getSender()).getAddress().getAddress().getHostAddress());
                 }
                 builder.endObject();
                 IndexRequest request = new IndexRequest("inspection").source(builder);
