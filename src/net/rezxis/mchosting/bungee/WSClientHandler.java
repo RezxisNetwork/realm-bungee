@@ -12,7 +12,9 @@ import org.java_websocket.handshake.ServerHandshake;
 import com.google.gson.Gson;
 
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.conf.Configuration;
@@ -73,7 +75,13 @@ public class WSClientHandler implements ClientHandler {
 		} else if (type == PacketType.PlayerSendPacket) {
 			BungPlayerSendPacket signal = gson.fromJson(message, BungPlayerSendPacket.class);
 			ProxiedPlayer p = BungeeCord.getInstance().getPlayer(UUID.fromString(signal.player));
-			p.connect(BungeeCord.getInstance().getServerInfo(signal.server));
+			ServerInfo info = BungeeCord.getInstance().getServerInfo(signal.server);
+			if (info == null) {
+				p.sendMessage(new TextComponent(ChatColor.RED+"エラーが発生しました。"));
+				System.out.println("Occurred null in PlayerSendPacket : "+signal.server);
+				return;
+			}
+			p.connect(info);
 		}
 	}
 
