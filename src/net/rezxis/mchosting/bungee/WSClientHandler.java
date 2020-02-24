@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.java_websocket.handshake.ServerHandshake;
@@ -58,7 +59,11 @@ public class WSClientHandler implements ClientHandler {
 			BungServerStopped signal = gson.fromJson(message, BungServerStopped.class);
 			try {
 				Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
-				servers.remove(signal.name);
+				for (Entry<String,ServerInfo> info : servers.entrySet()) {
+					if (info.getKey().equalsIgnoreCase(signal.name)) {
+						servers.remove(info.getKey());
+					}
+				}
 				Field field = Configuration.class.getDeclaredField("servers");
 				field.setAccessible(true);
 				field.set(BungeeCord.getInstance().config, servers);
@@ -68,7 +73,6 @@ public class WSClientHandler implements ClientHandler {
 		} else if (type == PacketType.PlayerSendPacket) {
 			BungPlayerSendPacket signal = gson.fromJson(message, BungPlayerSendPacket.class);
 			ProxiedPlayer p = BungeeCord.getInstance().getPlayer(UUID.fromString(signal.player));
-			
 			p.connect(BungeeCord.getInstance().getServerInfo(signal.server));
 		}
 	}
