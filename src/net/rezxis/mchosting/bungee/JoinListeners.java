@@ -38,7 +38,7 @@ public class JoinListeners implements Listener {
 		}
 		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
 		if (e.getConnection().getVirtualHost().getHostName().startsWith("link")) {
-			if (player.getDiscordId() == -1) {
+			if (player.getDiscordId() != -1) {
 				e.setCancelled(true);
 				e.setCancelReason(new TextComponent(ChatColor.RED+"あなたのDiscordはすでにリンクされています。"));
 				return;
