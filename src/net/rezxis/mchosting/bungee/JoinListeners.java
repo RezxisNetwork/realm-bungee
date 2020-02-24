@@ -1,9 +1,10 @@
 package net.rezxis.mchosting.bungee;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
+
+import org.apache.commons.lang3.RandomStringUtils;
 
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.ServerConnector;
@@ -31,8 +32,24 @@ public class JoinListeners implements Listener {
 	@EventHandler
 	public void onJoin(LoginEvent e) {
 		DBPlayer player = Tables.getPTable().get(e.getConnection().getUniqueId());
+		if (player == null) {
+			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), new Date(), true, false ,"",false,false,new Date(),"",0,"",-1);
+			Tables.getPTable().insert(player);
+		}
 		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
-		
+		if (e.getConnection().getVirtualHost().getHostName().startsWith("link")) {
+			if (player.getDiscordId() == -1) {
+				e.setCancelled(true);
+				e.setCancelReason(new TextComponent(ChatColor.RED+"あなたのDiscordはすでにリンクされています。"));
+				return;
+			}
+			String key = RandomStringUtils.randomAlphabetic(10);
+			player.setVerifyCode(key);
+			player.update();
+			e.setCancelled(true);
+			e.setCancelReason(new TextComponent(ChatColor.GREEN+"Link Code : "+key));
+			return;
+		}
 		//check multi connection;
 		int accs = 0;
 		for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
@@ -45,10 +62,6 @@ public class JoinListeners implements Listener {
 		if (accs >= 5) {
 			e.setCancelled(true);
 			e.setCancelReason(new TextComponent(ChatColor.RED+"同時接続はできません。"));
-		}
-		if (player == null) {
-			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), new Date(), true, false ,"",false,false,new Date(),"",0);
-			Tables.getPTable().insert(player);
 		}
 		if (!player.isVpnBypass()) {
 			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
