@@ -1,6 +1,5 @@
 package net.rezxis.mchosting.bungee.commands;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.UUID;

@@ -89,10 +89,11 @@
     	<version>3.9</version>
 	</dependency>
 	<dependency>
-    	<artifactId>BungeeCord</artifactId>
-    	<groupId>rezxis</groupId>
-    	<version>0</version>
-    	<scope>provided</scope>
+		<artifactId>BungeeCord</artifactId>
+		<groupId>com.vexsoftware</groupId>
+		<version>0</version>
+		<scope>system</scope>
+		<systemPath>${basedir}/BungeeCord.jar</systemPath>
 	</dependency>
 	 <dependency>
  		<groupId>org.elasticsearch.client</groupId>
