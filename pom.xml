@@ -11,11 +11,6 @@
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
-          <archive>
-        	<manifest>
-        		<mainClass>net.rezxis.mchosting.host.HostServer</mainClass>
-        	</manifest>
-      	  </archive>
         </configuration>
       </plugin>
       <plugin>
@@ -26,11 +21,6 @@
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
-          <archive>
-            <manifest>
-              <mainClass>net.rezxis.mchosting.host.HostServer</mainClass>
-            </manifest>
-          </archive>
         </configuration>
         <executions>
           <execution>
