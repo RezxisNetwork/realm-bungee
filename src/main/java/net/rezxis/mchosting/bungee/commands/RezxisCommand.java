@@ -38,6 +38,7 @@ public class RezxisCommand extends Command {
 				UUID uuid;
 				if (BungeeCord.getInstance().getPlayer(args[1]) != null && BungeeCord.getInstance().getPlayer(args[1]).isConnected()) {
 					uuid = BungeeCord.getInstance().getPlayer(args[1]).getUniqueId();
+					BungeeCord.getInstance().getPlayer(args[1]).disconnect(new TextComponent(ChatColor.RED+args[2]));
 				} else {
 					DBUUID dbuid = Tables.getUTable().get(args[1]);
 					if (dbuid == null) {
