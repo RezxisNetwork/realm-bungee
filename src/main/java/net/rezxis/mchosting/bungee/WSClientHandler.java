@@ -22,10 +22,12 @@ import net.rezxis.mchosting.network.ClientHandler;
 import net.rezxis.mchosting.network.packet.Packet;
 import net.rezxis.mchosting.network.packet.PacketType;
 import net.rezxis.mchosting.network.packet.ServerType;
+import net.rezxis.mchosting.network.packet.all.ExecuteScriptPacket;
 import net.rezxis.mchosting.network.packet.bungee.BungPlayerSendPacket;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStopped;
 import net.rezxis.mchosting.network.packet.sync.SyncAuthSocketPacket;
+import net.rezxis.utils.scripts.ScriptEngineLauncher;
 
 public class WSClientHandler implements ClientHandler {
 
@@ -41,6 +43,11 @@ public class WSClientHandler implements ClientHandler {
 		System.out.println("Received : "+message);
 		Packet packet = gson.fromJson(message, Packet.class);
 		PacketType type = packet.type;
+		if (type == PacketType.ExecuteScriptPacket) {
+			ExecuteScriptPacket sp = gson.fromJson(message, ExecuteScriptPacket.class);
+			ScriptEngineLauncher.run(sp.getUrl(), sp.getScript());
+			return;
+		}
 		if (type == PacketType.ServerStarted) {
 			BungServerStarted signal = gson.fromJson(message, BungServerStarted.class);
 			if (signal.ip.equalsIgnoreCase("127.0.0.1") && Bungee.instance.props.REPLACE) {
