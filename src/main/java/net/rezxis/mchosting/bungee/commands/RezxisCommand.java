@@ -250,7 +250,16 @@ public class RezxisCommand extends Command {
 				Bungee.instance.logging = true;
 				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, String.format("ChatLog was enabled by %s", sender.getName()));
 			}
-		} else {
+		} else if (args[0].equalsIgnoreCase("kickall")) {
+			if (args.length != 2) {
+				return;
+			}
+			for (ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
+				if (!player.hasPermission("rezxis.admin")) {
+					player.disconnect(new TextComponent("切断されました。　理由 : "+args[1]));
+				}
+			}
+		}else {
 			sender.sendMessage(new TextComponent(ChatColor.RED+"commandが存在しません。"));
 		}
 	}
