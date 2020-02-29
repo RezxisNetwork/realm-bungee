@@ -19,10 +19,13 @@ public class BuyRewardCommand extends Command {
 		super("buyreward", "rezxis.rank");
 	}
 
+	public static UUID getUUIDFromNonDashedString(String uuid) {
+		return UUID.fromString( uuid.substring( 0, 8 ) + "-" + uuid.substring( 8, 12 ) + "-" + uuid.substring( 12, 16 ) + "-" + uuid.substring( 16, 20 ) + "-" + uuid.substring( 20, 32 ) );
+    }
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		UUID uuid = UUID.fromString(args[0]);
+		UUID uuid = getUUIDFromNonDashedString(args[0]);
 		ProxiedPlayer pp = BungeeCord.getInstance().getPlayer(uuid);
 		DBPlayer player = Tables.getPTable().get(uuid);
 		if (Integer.valueOf(args[1]) == 0) {
