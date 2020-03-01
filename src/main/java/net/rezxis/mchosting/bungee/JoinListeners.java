@@ -123,6 +123,7 @@ public class JoinListeners implements Listener {
 		DBPlayer player = Tables.getPTable().get(e.getPlayer().getUniqueId());
 		if (player.isStaff()) {
 			e.getPlayer().setPermission("rezxis.admin", true);
+			e.getPlayer().setPermission("bat.lookup.displayip", true);
 			e.getPlayer().setPermission("bat.admin", true);
 			try {
 				Field field = ServerConnector.class.getDeclaredField("arra");
