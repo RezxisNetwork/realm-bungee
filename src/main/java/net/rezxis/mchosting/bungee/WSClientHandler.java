@@ -23,6 +23,7 @@ import net.rezxis.mchosting.network.packet.Packet;
 import net.rezxis.mchosting.network.packet.PacketType;
 import net.rezxis.mchosting.network.packet.ServerType;
 import net.rezxis.mchosting.network.packet.all.ExecuteScriptPacket;
+import net.rezxis.mchosting.network.packet.bungee.BungPlayerMessagePacket;
 import net.rezxis.mchosting.network.packet.bungee.BungPlayerSendPacket;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStopped;
@@ -89,6 +90,12 @@ public class WSClientHandler implements ClientHandler {
 				return;
 			}
 			p.connect(info);
+		} else if (type == PacketType.MESSAGE) {
+			BungPlayerMessagePacket mp = gson.fromJson(message, BungPlayerMessagePacket.class);
+			ProxiedPlayer player = BungeeCord.getInstance().getPlayer(mp.getTarget());
+			if (player != null && player.isConnected()) {
+				player.sendMessage(new TextComponent(mp.getMessage()));
+			}
 		}
 	}
 
