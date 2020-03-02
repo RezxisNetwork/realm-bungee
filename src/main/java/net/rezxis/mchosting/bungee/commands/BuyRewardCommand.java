@@ -54,6 +54,7 @@ public class BuyRewardCommand extends Command {
 				calendar.add(Calendar.MONTH, 1);
 				player.setSupporterExpire(calendar.getTime());
 			}
+			player.setSupporter(true);
 			player.update();
 			if (pp != null)
 				if (pp.isConnected())

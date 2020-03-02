@@ -145,6 +145,10 @@ public class JoinListeners implements Listener {
 			e.getPlayer().setPermission("rezxis.rank", false);
 		}
 		player.setOnline(true);
+		if (player.isExpiredSupporter() && player.isSupporter()) {
+			e.getPlayer().sendMessage(new TextComponent(ChatColor.RED+"あなたのサポーターランク期限は切れました。 期限 : "+player.getSupporterExpire().toLocaleString()));
+			player.setSupporter(false);
+		}
 		player.update();
 	}
 	
