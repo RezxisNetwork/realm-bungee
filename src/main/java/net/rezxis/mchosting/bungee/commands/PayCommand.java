@@ -1,14 +1,22 @@
 package net.rezxis.mchosting.bungee.commands;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
+
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
 
 public class PayCommand extends Command {
 
+	private HashMap<UUID,Long> coins = new HashMap<>();
+	private HashMap<UUID,UUID> dests = new HashMap<>();
+	
 	public PayCommand() {
 		super("pay");
 		// TODO Auto-generated constructor stub
@@ -17,9 +25,7 @@ public class PayCommand extends Command {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		if (args.length != 2) {
-			sender.sendMessage(ChatColor.RED+"使い方 : /pay 送金先 金額");
-		} else {
+		if (args.length == 2)  {
 			DBPlayer player = Tables.getPTable().get(BungeeCord.getInstance().getPlayer(sender.getName()).getUniqueId());
 			DBPlayer target = Tables.getPTable().get(BungeeCord.getInstance().getPlayer(args[0]).getUniqueId());
 			if (target == null) {
@@ -45,12 +51,27 @@ public class PayCommand extends Command {
 				sender.sendMessage(ChatColor.RED+"自分には送金できません。");
 				return;
 			}
-			player.setCoin(player.getCoin()-c);
-			target.setCoin(target.getCoin()+c);
-			player.update();
-			target.update();
-			sender.sendMessage(ChatColor.GREEN+(c+"を"+args[0]+"に送金しました。"));
-			BungeeCord.getInstance().getPlayer(args[0]).sendMessage(ChatColor.GREEN+""+sender.getName()+"から"+c+"を受け取りました。");
+			coins.put(player.getUUID(), Long.valueOf(c));
+			dests.put(player.getUUID(), target.getUUID());
+			sender.sendMessage(new TextComponent(ChatColor.GREEN+"/pay confirm で承認してください。"));
+		}  else if (args.length == 1) {
+			if (args[0].equalsIgnoreCase("confirm")) {
+				DBPlayer player = Tables.getPTable().get(BungeeCord.getInstance().getPlayer(sender.getName()).getUniqueId());
+				DBPlayer target = Tables.getPTable().get(dests.get(player.getUUID()));
+				coins.remove(player.getUUID());
+				dests.remove(player.getUUID());
+				long c = coins.get(player.getUUID());
+				player.setCoin(player.getCoin()-c);
+				target.setCoin(target.getCoin()+c);
+				player.update();
+				target.update();
+				sender.sendMessage(ChatColor.GREEN+(c+"RealmCoinを"+args[0]+"に送金しました。"));
+				BungeeCord.getInstance().getPlayer(target.getUUID()).sendMessage(ChatColor.GREEN+""+sender.getName()+"から"+c+"RealmCoinを受け取りました。");
+			} else {
+				sender.sendMessage(ChatColor.RED+"使い方 : /pay 送金先 金額");
+			}
+		} else {
+			sender.sendMessage(ChatColor.RED+"使い方 : /pay 送金先 金額");
 		}
 	}
 }

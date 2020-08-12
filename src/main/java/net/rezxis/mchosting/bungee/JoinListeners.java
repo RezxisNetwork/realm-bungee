@@ -2,9 +2,8 @@ package net.rezxis.mchosting.bungee;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
-
-import org.apache.commons.lang3.RandomStringUtils;
 
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.ServerConnector;
@@ -33,7 +32,10 @@ public class JoinListeners implements Listener {
 	public void onJoin(LoginEvent e) {
 		DBPlayer player = Tables.getPTable().get(e.getConnection().getUniqueId());
 		if (player == null) {
-			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), new Date(), true, false ,"",false,false,new Date(),"",0,"",-1);
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_WEEK, -2);
+			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), calendar.getTime(), true, false ,"",false,false,new Date(),"",0,"",-1);
 			Tables.getPTable().insert(player);
 		}
 		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
