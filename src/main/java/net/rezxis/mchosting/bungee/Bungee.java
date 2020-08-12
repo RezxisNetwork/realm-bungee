@@ -40,6 +40,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.rezxis.mchosting.bungee.commands.BuyRewardCommand;
 import net.rezxis.mchosting.bungee.commands.GTellCommand;
 import net.rezxis.mchosting.bungee.commands.HubCommand;
+import net.rezxis.mchosting.bungee.commands.LinkCommand;
 import net.rezxis.mchosting.bungee.commands.LobbyCommand;
 import net.rezxis.mchosting.bungee.commands.PayCommand;
 import net.rezxis.mchosting.bungee.commands.PingCommand;
@@ -133,6 +134,7 @@ public class Bungee extends Plugin implements Listener {
 		getProxy().getPluginManager().registerCommand(this, new VoteCommand());
 		getProxy().getPluginManager().registerCommand(this, new GTellCommand());
 		getProxy().getPluginManager().registerCommand(this, new ReportCommand());
+		getProxy().getPluginManager().registerCommand(this, new LinkCommand());
 		messages.add(ChatColor.GREEN+"一日一回気に入ったレールムに投票しよう！"+ChatColor.AQUA+" 投票したいサーバーに入って/vote");
 		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/3E6BvNY");
 		messages.add(ChatColor.GREEN+"JMSに投票して報酬をゲットしよう！ "+ChatColor.AQUA+" https://minecraft.jp/servers/play.rezxis.net/vote");
@@ -182,9 +184,7 @@ public class Bungee extends Plugin implements Listener {
                     builder.field("server", ((ProxiedPlayer)event.getSender()).getServer().getInfo().getName());
                     
                     builder.field("content", event.getMessage());
-                    builder.field("message", ((ProxiedPlayer)event.getSender()).getName() + " (" + ((ProxiedPlayer)event.getSender()).getServer().getInfo().getName() + "): " + event.getMessage());
-                    
-                    //builder.field("message", event.getMessage());
+                    builder.field("message", event.getMessage());
                     builder.field("name", "inspection");
                     
                     builder.field("ip", ((ProxiedPlayer)event.getSender()).getAddress().getAddress().getHostAddress());

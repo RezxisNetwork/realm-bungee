@@ -37,19 +37,6 @@ public class JoinListeners implements Listener {
 			Tables.getPTable().insert(player);
 		}
 		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
-		if (e.getConnection().getVirtualHost().getHostName().startsWith("link")) {
-			if (player.getDiscordId() != -1) {
-				e.setCancelled(true);
-				e.setCancelReason(ChatColor.RED+"あなたのDiscordはすでにリンクされています。");
-				return;
-			}
-			String key = RandomStringUtils.randomAlphabetic(10);
-			player.setVerifyCode(key);
-			player.update();
-			e.setCancelled(true);
-			e.setCancelReason(ChatColor.GREEN+"Link Code : "+key);
-			return;
-		}
 		//check multi connection;
 		int accs = 0;
 		for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
