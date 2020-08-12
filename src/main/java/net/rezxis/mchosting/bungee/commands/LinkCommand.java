@@ -21,7 +21,7 @@ public class LinkCommand extends Command {
 		if (sender instanceof ProxiedPlayer) {
 			ProxiedPlayer pp = (ProxiedPlayer) sender;
 			DBPlayer dp = Tables.getPTable().get(pp.getUniqueId());
-			if (dp.getDiscordId() == -1) {
+			if (dp.getDiscordId() != -1) {
 				sender.sendMessage(new TextComponent(ChatColor.RED+"あなたのDiscordはすでにリンクされています。"));
 				return;
 			}
