@@ -82,7 +82,6 @@ public class Bungee extends Plugin implements Listener {
     
     static {
         RequestOptions.Builder build = RequestOptions.DEFAULT.toBuilder();
-        build.addHeader("Authorization", "Basic cmV6eGlzOktudFN5a3JsWHlBY1B0T0o=");
         COMMON_OPTIONS = build.build();
     }
 	
