@@ -184,7 +184,9 @@ public class Bungee extends Plugin implements Listener {
                     builder.field("server", ((ProxiedPlayer)event.getSender()).getServer().getInfo().getName());
                     
                     builder.field("content", event.getMessage());
-                    builder.field("message", event.getMessage());
+                    builder.field("message", ((ProxiedPlayer)event.getSender()).getName() + " (" + ((ProxiedPlayer)event.getSender()).getServer().getInfo().getName() + "): " + event.getMessage());
+                    
+                    //builder.field("message", event.getMessage());
                     builder.field("name", "inspection");
                     
                     builder.field("ip", ((ProxiedPlayer)event.getSender()).getAddress().getAddress().getHostAddress());
