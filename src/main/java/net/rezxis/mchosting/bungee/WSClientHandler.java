@@ -51,10 +51,6 @@ public class WSClientHandler implements ClientHandler {
 		}
 		if (type == PacketType.ServerStarted) {
 			BungServerStarted signal = gson.fromJson(message, BungServerStarted.class);
-			if (signal.ip.equalsIgnoreCase("127.0.0.1") && Bungee.instance.props.REPLACE) {
-				signal.ip = "172.18.0.1";
-				System.out.println("replaced");
-			}
 			ServerInfo serverInfo = ProxyServer.getInstance().constructServerInfo(signal.displayName, new InetSocketAddress(signal.ip, signal.port), signal.displayName, false);
 			try {
 				Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
