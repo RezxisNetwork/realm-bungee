@@ -79,13 +79,12 @@
     	<version>3.9</version>
 	</dependency>
 	<dependency>
-		<artifactId>BungeeCord</artifactId>
-		<groupId>com.vexsoftware</groupId>
-		<version>0</version>
-		<scope>system</scope>
-		<systemPath>${basedir}/BungeeCord.jar</systemPath>
-	</dependency>
-	 <dependency>
+  		<groupId>bungeecord</groupId>
+  		<artifactId>bungeecord</artifactId>
+  		<version>0</version>
+  		<scope>provided</scope>
+  	</dependency>
+	<dependency>
  		<groupId>org.elasticsearch.client</groupId>
 		<artifactId>elasticsearch-rest-high-level-client</artifactId>
  		<version>7.5.2</version>

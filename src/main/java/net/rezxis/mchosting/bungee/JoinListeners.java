@@ -40,14 +40,14 @@ public class JoinListeners implements Listener {
 		if (e.getConnection().getVirtualHost().getHostName().startsWith("link")) {
 			if (player.getDiscordId() != -1) {
 				e.setCancelled(true);
-				e.setCancelReason(new TextComponent(ChatColor.RED+"あなたのDiscordはすでにリンクされています。"));
+				e.setCancelReason(ChatColor.RED+"あなたのDiscordはすでにリンクされています。");
 				return;
 			}
 			String key = RandomStringUtils.randomAlphabetic(10);
 			player.setVerifyCode(key);
 			player.update();
 			e.setCancelled(true);
-			e.setCancelReason(new TextComponent(ChatColor.GREEN+"Link Code : "+key));
+			e.setCancelReason(ChatColor.GREEN+"Link Code : "+key);
 			return;
 		}
 		//check multi connection;
@@ -61,7 +61,7 @@ public class JoinListeners implements Listener {
 		}
 		if (accs >= 5) {
 			e.setCancelled(true);
-			e.setCancelReason(new TextComponent(ChatColor.RED+"同時接続はできません。"));
+			e.setCancelReason(ChatColor.RED+"同時接続はできません。");
 		}
 		if (!player.isVpnBypass()) {
 			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
@@ -95,7 +95,7 @@ public class JoinListeners implements Listener {
 		
 		if (player.isBan()) {
 			e.setCancelled(true);
-			e.setCancelReason(new TextComponent(ChatColor.RED+player.getReason()));
+			e.setCancelReason(ChatColor.RED+player.getReason());
 			return;
 		}
 		DBIP dbip = Tables.getIpTable().get(ip);
@@ -110,7 +110,7 @@ public class JoinListeners implements Listener {
 		}
 		if (dbip.isBanned()) {
 			e.setCancelled(true);
-			e.setCancelReason(new TextComponent(dbip.getReason()));
+			e.setCancelReason(dbip.getReason());
 			player.setBan(true);
 			player.setReason(dbip.getReason());
 			player.update();
