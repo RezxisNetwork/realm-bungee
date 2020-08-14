@@ -6,6 +6,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.rezxis.mchosting.bungee.KanaConverter;
 
 public class GTellCommand extends Command {
 
@@ -29,6 +30,7 @@ public class GTellCommand extends Command {
 				message += " "+args[i];
 			}
 			message = message.replace("&", "§");
+			message = KanaConverter.fixBrackets(KanaConverter.conv(message));
 			TextComponent comp = new TextComponent(prefix+"["+s+"->"+player.getName()+"]"+message);
 			sender.sendMessage(comp);
 			player.sendMessage(comp);
