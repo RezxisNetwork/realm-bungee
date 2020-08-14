@@ -2,6 +2,7 @@ package net.rezxis.mchosting.bungee.commands;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import net.md_5.bungee.BungeeCord;
@@ -58,7 +59,13 @@ public class PayCommand extends Command {
 			if (args[0].equalsIgnoreCase("confirm")) {
 				UUID uuid = BungeeCord.getInstance().getPlayer(sender.getName()).getUniqueId();
 				DBPlayer player = Tables.getPTable().get(uuid);
-				DBPlayer target = Tables.getPTable().get(dests.get(uuid));
+				UUID a = null;
+				for (Entry<UUID,UUID> e : dests.entrySet()) {
+					if (e.getKey().toString().equalsIgnoreCase(uuid.toString())) {
+						a = e.getValue();
+					}
+				}
+				DBPlayer target = Tables.getPTable().get(a);
 				coins.remove(player.getUUID());
 				dests.remove(player.getUUID());
 				long c = coins.get(player.getUUID());
