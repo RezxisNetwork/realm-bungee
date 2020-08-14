@@ -56,8 +56,9 @@ public class PayCommand extends Command {
 			sender.sendMessage(new TextComponent(ChatColor.GREEN+"/pay confirm で承認してください。"));
 		}  else if (args.length == 1) {
 			if (args[0].equalsIgnoreCase("confirm")) {
-				DBPlayer player = Tables.getPTable().get(BungeeCord.getInstance().getPlayer(sender.getName()).getUniqueId());
-				DBPlayer target = Tables.getPTable().get(dests.get(player.getUUID()));
+				UUID uuid = BungeeCord.getInstance().getPlayer(sender.getName()).getUniqueId();
+				DBPlayer player = Tables.getPTable().get(uuid);
+				DBPlayer target = Tables.getPTable().get(dests.get(uuid));
 				coins.remove(player.getUUID());
 				dests.remove(player.getUUID());
 				long c = coins.get(player.getUUID());
