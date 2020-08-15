@@ -1,8 +1,11 @@
 package net.rezxis.mchosting.bungee;
 
+import java.lang.reflect.Field;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -21,10 +24,13 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Protocol;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.ChatEvent;
@@ -36,6 +42,7 @@ import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.event.ServerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.conf.Configuration;
 import net.md_5.bungee.event.EventHandler;
 import net.rezxis.mchosting.bungee.commands.BuyRewardCommand;
 import net.rezxis.mchosting.bungee.commands.GTellCommand;
@@ -157,6 +164,23 @@ public class Bungee extends Plugin implements Listener {
 		}).start();
 		this.getProxy().getScheduler().schedule(this, new AnnounceTask(), 1, min, TimeUnit.MINUTES);
 		this.getProxy().getScheduler().schedule(this, new RewardTask(), 1, 15, TimeUnit.MINUTES);
+		resumeServers();
+	}
+	
+	private void resumeServers() {
+		ArrayList<ServerWrapper> wrapper = ServerWrapper.getServers(true, null);
+		Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
+		for (ServerWrapper wrap : wrapper) {
+			servers.put(wrap.getDisplayName(), 
+					ProxyServer.getInstance().constructServerInfo(wrap.getDisplayName(), new InetSocketAddress(wrap.getAddress(), wrap.getPort()), wrap.getDisplayName(), false));
+		}
+		try {
+			Field field = Configuration.class.getDeclaredField("servers");
+			field.setAccessible(true);
+			field.set(BungeeCord.getInstance().config, servers);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	@EventHandler

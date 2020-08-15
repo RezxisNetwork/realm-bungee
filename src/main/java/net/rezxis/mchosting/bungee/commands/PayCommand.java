@@ -66,15 +66,20 @@ public class PayCommand extends Command {
 					}
 				}
 				DBPlayer target = Tables.getPTable().get(a);
-				coins.remove(player.getUUID());
-				dests.remove(player.getUUID());
-				long c = coins.get(player.getUUID());
+				long c = 0;//coins.get(player.getUUID());
+				for (Entry<UUID, Long> e : coins.entrySet()) {
+					if (e.getKey().toString().equalsIgnoreCase(uuid.toString())) {
+						c = e.getValue();
+					}
+				}
 				player.setCoin(player.getCoin()-c);
 				target.setCoin(target.getCoin()+c);
 				player.update();
 				target.update();
 				sender.sendMessage(ChatColor.GREEN+(c+"RealmCoinを"+args[0]+"に送金しました。"));
 				BungeeCord.getInstance().getPlayer(target.getUUID()).sendMessage(ChatColor.GREEN+""+sender.getName()+"から"+c+"RealmCoinを受け取りました。");
+				coins.remove(player.getUUID());
+				dests.remove(player.getUUID());
 			} else {
 				sender.sendMessage(ChatColor.RED+"使い方 : /pay 送金先 金額");
 			}
