@@ -162,6 +162,11 @@ public class Bungee extends Plugin implements Listener {
 				ws.connect();
 			
 		}).start();
+		Runtime.getRuntime().addShutdownHook(new Thread(()->{
+			if (!ws.isClosed()) {
+				ws.close();
+			}
+		}));
 		this.getProxy().getScheduler().schedule(this, new AnnounceTask(), 1, min, TimeUnit.MINUTES);
 		this.getProxy().getScheduler().schedule(this, new RewardTask(), 1, 15, TimeUnit.MINUTES);
 		resumeServers();
