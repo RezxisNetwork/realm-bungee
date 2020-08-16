@@ -122,7 +122,7 @@ public class JoinListeners implements Listener {
 	            builder.timeField("@timestamp", sdf.format(System.currentTimeMillis()));
 	            builder.field("player",e.getConnection().getName());
 	            builder.field("name", "login");
-	            builder.field("action","join");
+	            builder.field("join",true);
 	            builder.field("ip", ip);
 	            builder.field("first", first);
 	        }
@@ -180,7 +180,7 @@ public class JoinListeners implements Listener {
 	            builder.timeField("@timestamp", sdf.format(System.currentTimeMillis()));
 	            builder.field("player", event.getPlayer().getName());
 	            builder.field("name", "login");
-	            builder.field("action","left");
+	            builder.field("join",false);
 	            builder.field("ip", event.getPlayer().getPendingConnection().getAddress().getAddress().getHostAddress());
 	            builder.field("first", false);
 	        }
