@@ -3,6 +3,7 @@ package net.rezxis.mchosting.bungee;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -65,14 +66,16 @@ public class WSClientHandler implements ClientHandler {
 			BungServerStopped signal = gson.fromJson(message, BungServerStopped.class);
 			try {
 				Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
-				for (Entry<String,ServerInfo> info : servers.entrySet()) {
+				HashMap<String,ServerInfo> cloned = new HashMap<>();
+				cloned.putAll(servers);
+				for (Entry<String,ServerInfo> info : cloned.entrySet()) {
 					if (info.getKey().equalsIgnoreCase(signal.name)) {
-						servers.remove(info.getKey());
+						cloned.remove(info.getKey());
 					}
 				}
 				Field field = Configuration.class.getDeclaredField("servers");
 				field.setAccessible(true);
-				field.set(BungeeCord.getInstance().config, servers);
+				field.set(BungeeCord.getInstance().config, cloned);
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
