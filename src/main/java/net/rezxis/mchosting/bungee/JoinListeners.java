@@ -1,11 +1,16 @@
 package net.rezxis.mchosting.bungee;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.ServerConnector;
@@ -32,8 +37,10 @@ public class JoinListeners implements Listener {
 	
 	@EventHandler
 	public void onJoin(LoginEvent e) {
+		boolean first = false;
 		DBPlayer player = Tables.getPTable().get(e.getConnection().getUniqueId());
 		if (player == null) {
+			first = true;
 			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Japan"),Locale.JAPANESE);
 			calendar.add(Calendar.DAY_OF_WEEK, -2);
 			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), calendar.getTime(), true, false ,"",false,false,new Date(),"",0,"",-1);
@@ -106,6 +113,25 @@ public class JoinListeners implements Listener {
 			player.update();
 			return;
 		}
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+	        XContentBuilder builder = XContentFactory.jsonBuilder();
+	        builder.startObject();
+	        {
+	            builder.timeField("@timestamp", sdf.format(System.currentTimeMillis()));
+	            builder.field("player",e.getConnection().getName());
+	            builder.field("name", "login");
+	            builder.field("action","join");
+	            builder.field("ip", ip);
+	            builder.field("first", first);
+	        }
+	        builder.endObject();
+	        IndexRequest request = new IndexRequest("login").source(builder);
+	        Bungee.rcl.indexAsync(request, Bungee.COMMON_OPTIONS, Bungee.listener);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	@EventHandler
@@ -145,5 +171,24 @@ public class JoinListeners implements Listener {
 	@EventHandler
 	public void onLeft(PlayerDisconnectEvent event) {
 		Bungee.instance.inspection.remove(event.getPlayer().getUniqueId());
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+	        XContentBuilder builder = XContentFactory.jsonBuilder();
+	        builder.startObject();
+	        {
+	            builder.timeField("@timestamp", sdf.format(System.currentTimeMillis()));
+	            builder.field("player", event.getPlayer().getName());
+	            builder.field("name", "login");
+	            builder.field("action","left");
+	            builder.field("ip", event.getPlayer().getPendingConnection().getAddress().getAddress().getHostAddress());
+	            builder.field("first", false);
+	        }
+	        builder.endObject();
+	        IndexRequest request = new IndexRequest("login").source(builder);
+	        Bungee.rcl.indexAsync(request, Bungee.COMMON_OPTIONS, Bungee.listener);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 }

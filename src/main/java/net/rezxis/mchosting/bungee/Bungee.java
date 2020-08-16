@@ -72,11 +72,11 @@ public class Bungee extends Plugin implements Listener {
 	public int min = 15;
 	public ArrayList<String> messages = new ArrayList<>();
 	public ArrayList<UUID> inspection = new ArrayList<>();
-	public RestHighLevelClient rcl = null;
-	private static final RequestOptions COMMON_OPTIONS;
+	public static RestHighLevelClient rcl = null;
+	public static final RequestOptions COMMON_OPTIONS;
 	public boolean logging = true;
 	
-	private static ActionListener<IndexResponse> listener = new ActionListener<IndexResponse>() {
+	public static ActionListener<IndexResponse> listener = new ActionListener<IndexResponse>() {
         @Override
         public void onResponse(IndexResponse indexResponse) {
             return;

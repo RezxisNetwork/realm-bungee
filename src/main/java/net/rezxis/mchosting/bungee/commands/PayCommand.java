@@ -65,6 +65,10 @@ public class PayCommand extends Command {
 						a = e.getValue();
 					}
 				}
+				if (a == null) {
+					sender.sendMessage(ChatColor.RED+"使い方 : /pay 送金先 金額");
+					return;
+				}
 				DBPlayer target = Tables.getPTable().get(a);
 				long c = 0;//coins.get(player.getUUID());
 				for (Entry<UUID, Long> e : coins.entrySet()) {
