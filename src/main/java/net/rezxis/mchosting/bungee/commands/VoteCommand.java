@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -45,8 +47,7 @@ public class VoteCommand extends Command {
 					dtp.setScore(dtp.getScore()+1);
 					dtp.update();
 				}
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(new Date());
+				Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Japan"),Locale.JAPANESE);
 				calendar.add(Calendar.DAY_OF_WEEK, 1);
 				self.setNextVote(calendar.getTime());
 				self.update();

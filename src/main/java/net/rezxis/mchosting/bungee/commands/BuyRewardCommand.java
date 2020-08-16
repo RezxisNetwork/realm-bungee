@@ -2,6 +2,8 @@ package net.rezxis.mchosting.bungee.commands;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import net.md_5.bungee.BungeeCord;
@@ -29,8 +31,7 @@ public class BuyRewardCommand extends Command {
 		ProxiedPlayer pp = BungeeCord.getInstance().getPlayer(uuid);
 		DBPlayer player = Tables.getPTable().get(uuid);
 		if (Integer.valueOf(args[1]) == 0) {
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(new Date());
+			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Japan"),Locale.JAPANESE);
 			Rank rank = Rank.valueOf(args[2]);
 			if (player.getRank() == rank && !player.isExpiredRank()) {
 				calendar.setTime(player.getRankExpire());
@@ -44,13 +45,12 @@ public class BuyRewardCommand extends Command {
 					pp.sendMessage(ChatColor.GREEN+"寄付ありがとうございます！内容 : "+rank.getPrefix());
 		} else if (Integer.valueOf(args[1]) == 1) {
 			if (!player.isExpiredSupporter()) {
-				Calendar calendar = Calendar.getInstance();
+				Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Japan"),Locale.JAPANESE);
 				calendar.setTime(player.getSupporterExpire());
 				calendar.add(Calendar.MONTH, 1);
 				player.setSupporterExpire(calendar.getTime());
 			} else {
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(new Date());
+				Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Japan"),Locale.JAPANESE);
 				calendar.add(Calendar.MONTH, 1);
 				player.setSupporterExpire(calendar.getTime());
 			}

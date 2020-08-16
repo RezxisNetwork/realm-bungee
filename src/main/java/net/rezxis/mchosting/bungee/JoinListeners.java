@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.ServerConnector;
@@ -32,8 +34,7 @@ public class JoinListeners implements Listener {
 	public void onJoin(LoginEvent e) {
 		DBPlayer player = Tables.getPTable().get(e.getConnection().getUniqueId());
 		if (player == null) {
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(new Date());
+			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Japan"),Locale.JAPANESE);
 			calendar.add(Calendar.DAY_OF_WEEK, -2);
 			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), calendar.getTime(), true, false ,"",false,false,new Date(),"",0,"",-1);
 			Tables.getPTable().insert(player);
