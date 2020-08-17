@@ -145,6 +145,7 @@ public class Bungee extends Plugin implements Listener {
 		messages.add(ChatColor.GREEN+"一日一回気に入ったレールムに投票しよう！"+ChatColor.AQUA+" 投票したいサーバーに入って/vote");
 		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/3E6BvNY");
 		messages.add(ChatColor.GREEN+"JMSに投票して報酬をゲットしよう！ "+ChatColor.AQUA+" https://minecraft.jp/servers/play.rezxis.net/vote");
+		messages.add(ChatColor.AQUA+"現在の自分の投票ステータス /voteinfo");
 		messages.add(ChatColor.GREEN+"Ticketからの報告以外で、"+ChatColor.AQUA+"/report <内容>で報告が可能です");
 		messages.add(ChatColor.GREEN+"/gtell <相手> <内容> でサーバーを超えて個人chatができます。");
 		messages.add(ChatColor.GOLD+"mystery box 星4,5を開けたい？ https://stoe.rezxis.net からサポーターを買おう ！ ");
