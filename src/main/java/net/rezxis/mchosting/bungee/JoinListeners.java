@@ -31,6 +31,7 @@ import net.rezxis.utils.WebAPI;
 import net.rezxis.utils.WebAPI.DiscordWebHookEnum;
 import net.rezxis.utils.WebAPI.McuaResponse;
 import net.rezxis.mchosting.database.object.player.DBPlayer.Rank;
+import net.rezxis.mchosting.database.tables.UuidTable;
 
 public class JoinListeners implements Listener {
 
@@ -113,6 +114,21 @@ public class JoinListeners implements Listener {
 			player.update();
 			return;
 		}
+		if (first) {
+			ArrayList<DBPIP> pips = Tables.getPipTable().getAllIPPlayer(player.getId());
+			StringBuilder sb = new StringBuilder("First join : "+e.getConnection().getName()+" Info\n");
+			for (DBPIP pip : pips) {
+				DBIP dip = Tables.getIpTable().getFromID(pip.getIp());
+				sb.append("ip : "+dip.getIp()+"\n");
+				ArrayList<DBPIP> targets = Tables.getPipTable().getAllfromIP(dip.getId());
+				for (DBPIP spip : targets) {
+					DBPlayer target = Tables.getPTable().getFromID(spip.getPlayer());
+					sb.append("-"+UuidTable.instnace.get(target.getUUID()).getName()+"\n");
+				}
+			}
+			WebAPI.webhook(DiscordWebHookEnum.CONNECT, sb.toString());
+		}
+		
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
