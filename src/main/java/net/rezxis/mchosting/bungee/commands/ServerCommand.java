@@ -33,8 +33,13 @@ public class ServerCommand extends Command implements TabExecutor {
 				for (ServerWrapper w : list) {
 					if (ChatColor.stripColor(w.getDisplayName()).equalsIgnoreCase(args[0])) {
 						((ProxiedPlayer)sender).connect(BungeeCord.getInstance().getServerInfo(w.getDisplayName()));
+						return;
 					}
 				}
+				TextComponent error = new TextComponent("そのようなサーバーはオフライン又は、存在しません。");
+				error.setColor(ChatColor.RED);
+				error.setBold(true);
+				sender.sendMessage(error);
 				return;
 			}
 		}
