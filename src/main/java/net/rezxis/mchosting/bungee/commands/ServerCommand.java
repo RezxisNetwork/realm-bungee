@@ -8,6 +8,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ClickEvent.Action;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
@@ -52,10 +53,14 @@ public class ServerCommand extends Command implements TabExecutor {
 			ServerWrapper s = ite.next();
 			TextComponent z = new TextComponent(s.getDisplayName()+ChatColor.GREEN+"("+String.valueOf(s.getPlayers())+")");
 			texts.add(z);
+			TextComponent connect = new TextComponent("クリックで接続");
+			connect.setColor(ChatColor.AQUA);
+			connect.setBold(true);
 			while (ite.hasNext()) {
 				ServerWrapper ts = ite.next();
 				TextComponent tx = new TextComponent(","+ts.getDisplayName()+ChatColor.RESET+""+ChatColor.GREEN+"("+String.valueOf(ts.getPlayers())+")");
-				tx.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "server "+ChatColor.stripColor(ts.getDisplayName())));
+				tx.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/server "+ChatColor.stripColor(ts.getDisplayName())));
+				tx.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[] {connect}));
 				texts.add(tx);
 			}
 		}
