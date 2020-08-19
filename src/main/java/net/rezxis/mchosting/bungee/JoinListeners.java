@@ -126,7 +126,7 @@ public class JoinListeners implements Listener {
 					sb.append("-"+UuidTable.instnace.get(target.getUUID()).getName()+"\n");
 				}
 			}
-			WebAPI.webhook(DiscordWebHookEnum.CONNECT, sb.toString());
+			WebAPI.webhook(DiscordWebHookEnum.PRIVATE, sb.toString());
 		}
 		
 		try {
