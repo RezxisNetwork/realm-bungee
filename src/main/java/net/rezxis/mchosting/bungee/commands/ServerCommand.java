@@ -28,7 +28,7 @@ public class ServerCommand extends Command implements TabExecutor {
 				all = true;
 			} else {
 				//connect
-				ArrayList<ServerWrapper> list = ServerWrapper.getServers(all, "players");
+				ArrayList<ServerWrapper> list = ServerWrapper.getServers(all, "players", false);
 				for (ServerWrapper w : list) {
 					if (ChatColor.stripColor(w.getDisplayName()).equalsIgnoreCase(args[0])) {
 						((ProxiedPlayer)sender).connect(BungeeCord.getInstance().getServerInfo(w.getDisplayName()));
@@ -37,7 +37,7 @@ public class ServerCommand extends Command implements TabExecutor {
 				return;
 			}
 		}
-		ArrayList<ServerWrapper> list = ServerWrapper.getServers(all, "players");
+		ArrayList<ServerWrapper> list = ServerWrapper.getServers(all, "players", false);
 		ArrayList<TextComponent> texts = new ArrayList<>();
 		if (list.size() == 0) {
 			TextComponent zero = new TextComponent("オンラインのサーバーがありません。");
@@ -65,7 +65,7 @@ public class ServerCommand extends Command implements TabExecutor {
 	@Override
 	public Iterable<String> onTabComplete(CommandSender arg0, String[] args) {
 		ArrayList<String> tab = new ArrayList<>();
-		ArrayList<ServerWrapper> list = ServerWrapper.getServers(true, "players");
+		ArrayList<ServerWrapper> list = ServerWrapper.getServers(true, "players", false);
 		for (ServerWrapper s : list) {
 			if (args.length == 0) {
 				tab.add(ChatColor.stripColor(s.getDisplayName()));

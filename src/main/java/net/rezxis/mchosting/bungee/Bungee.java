@@ -174,7 +174,7 @@ public class Bungee extends Plugin implements Listener {
 	}
 	
 	private void resumeServers() {
-		ArrayList<ServerWrapper> wrapper = ServerWrapper.getServers(true, null);
+		ArrayList<ServerWrapper> wrapper = ServerWrapper.getServers(true, null, false);
 		Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
 		for (ServerWrapper wrap : wrapper) {
 			servers.put(wrap.getDisplayName(), 
