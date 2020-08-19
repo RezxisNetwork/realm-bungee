@@ -59,7 +59,13 @@ public class ServerCommand extends Command implements TabExecutor {
 				texts.add(tx);
 			}
 		}
-		sender.sendMessage((TextComponent[]) texts.toArray());
+		TextComponent[] tcs = new TextComponent[texts.size()];
+		int i = 0;
+		for (TextComponent tc : texts) {
+			tcs[i] = tc;
+			i++;
+		}
+		sender.sendMessage(tcs);
 	}
 	
 	@Override
