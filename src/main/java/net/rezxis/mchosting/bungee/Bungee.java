@@ -53,6 +53,7 @@ import net.rezxis.mchosting.bungee.commands.PayCommand;
 import net.rezxis.mchosting.bungee.commands.PingCommand;
 import net.rezxis.mchosting.bungee.commands.ReportCommand;
 import net.rezxis.mchosting.bungee.commands.RezxisCommand;
+import net.rezxis.mchosting.bungee.commands.ServerCommand;
 import net.rezxis.mchosting.bungee.commands.VoteCommand;
 import net.rezxis.mchosting.bungee.tasks.AnnounceTask;
 import net.rezxis.mchosting.bungee.tasks.RewardTask;
@@ -142,6 +143,7 @@ public class Bungee extends Plugin implements Listener {
 		getProxy().getPluginManager().registerCommand(this, new GTellCommand());
 		getProxy().getPluginManager().registerCommand(this, new ReportCommand());
 		getProxy().getPluginManager().registerCommand(this, new LinkCommand());
+		getProxy().getPluginManager().registerCommand(this, new ServerCommand());
 		messages.add(ChatColor.GREEN+"一日一回気に入ったレールムに投票しよう！"+ChatColor.AQUA+" 投票したいサーバーに入って/vote");
 		messages.add(ChatColor.GREEN+"公式Discordに参加して、最新情報をゲットしよう！ "+ChatColor.AQUA+"https://discord.gg/3E6BvNY");
 		messages.add(ChatColor.GREEN+"JMSに投票して報酬をゲットしよう！ "+ChatColor.AQUA+" https://minecraft.jp/servers/play.rezxis.net/vote");
