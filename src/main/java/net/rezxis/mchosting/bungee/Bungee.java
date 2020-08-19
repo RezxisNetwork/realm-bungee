@@ -234,11 +234,7 @@ public class Bungee extends Plugin implements Listener {
 	public void onConnect(ServerConnectedEvent event) {
 		ServerWrapper swp = ServerWrapper.getServerByName(event.getServer().getInfo().getName());
 		if (swp != null) {
-			if (swp.isDBServer()) {
-				DBServer ds = swp.getDBServer();
-				ds.setPlayers(event.getServer().getInfo().getPlayers().size());
-				ds.update();
-			} else {
+			if (!swp.isDBServer()) {
 				DBThirdParty dp = swp.getDBThirdParty();
 				dp.setPlayers(event.getServer().getInfo().getPlayers().size());
 				dp.update();
@@ -250,11 +246,7 @@ public class Bungee extends Plugin implements Listener {
 	public void onDisconnect(ServerDisconnectEvent event) {
 		ServerWrapper swp = ServerWrapper.getServerByName(event.getTarget().getName());
 		if (swp != null) {
-			if (swp.isDBServer()) {
-				DBServer ds = swp.getDBServer();
-				ds.setPlayers(event.getTarget().getPlayers().size());
-				ds.update();
-			} else {
+			if (!swp.isDBServer()) {
 				DBThirdParty dp = swp.getDBThirdParty();
 				dp.setPlayers(event.getTarget().getPlayers().size());
 				dp.update();

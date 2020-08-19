@@ -40,6 +40,7 @@ public class WSClientHandler implements ClientHandler {
 		Bungee.instance.ws.send(gson.toJson(new SyncAuthSocketPacket(ServerType.BUNGEE, null)));
 	}
 
+	@SuppressWarnings({"unchecked" })
 	@Override
 	public void onMessage(String message) {
 		System.out.println("Received : "+message);
@@ -66,8 +67,13 @@ public class WSClientHandler implements ClientHandler {
 			BungServerStopped signal = gson.fromJson(message, BungServerStopped.class);
 			try {
 				Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
-				HashMap<String,ServerInfo> cloned = new HashMap<>();
-				cloned.putAll(servers);
+				HashMap<String,ServerInfo> cloned;
+				if (servers instanceof HashMap) {
+					cloned = (HashMap<String, ServerInfo>)((HashMap<String, ServerInfo>) servers).clone();
+				} else {
+					 cloned = new HashMap<>();
+					 cloned.putAll(servers);
+				}
 				for (Entry<String,ServerInfo> info : cloned.entrySet()) {
 					if (info.getKey().equalsIgnoreCase(signal.name)) {
 						cloned.remove(info.getKey());
