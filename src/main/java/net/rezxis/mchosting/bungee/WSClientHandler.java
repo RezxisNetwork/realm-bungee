@@ -12,6 +12,7 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import com.google.gson.Gson;
 
+import gnu.trove.map.TMap;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -66,22 +67,11 @@ public class WSClientHandler implements ClientHandler {
 		} else if (type == PacketType.ServerStopped) {
 			BungServerStopped signal = gson.fromJson(message, BungServerStopped.class);
 			try {
-				Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
-				HashMap<String,ServerInfo> cloned;
-				if (servers instanceof HashMap) {
-					cloned = (HashMap<String, ServerInfo>)((HashMap<String, ServerInfo>) servers).clone();
-				} else {
-					 cloned = new HashMap<>();
-					 cloned.putAll(servers);
-				}
-				for (Entry<String,ServerInfo> info : cloned.entrySet()) {
-					if (info.getKey().equalsIgnoreCase(signal.name)) {
-						cloned.remove(info.getKey());
-					}
-				}
+				TMap<String,ServerInfo> servers = (TMap<String, ServerInfo>) ProxyServer.getInstance().getServers();
+				servers.remove(signal.name);
 				Field field = Configuration.class.getDeclaredField("servers");
 				field.setAccessible(true);
-				field.set(BungeeCord.getInstance().config, cloned);
+				field.set(BungeeCord.getInstance().config, servers);
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
