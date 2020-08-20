@@ -28,12 +28,18 @@ public class ServerCommand extends Command implements TabExecutor {
 			if (args[0].equalsIgnoreCase("all")) {
 				all = true;
 			} else {
-				//connect
-				ArrayList<ServerWrapper> list = ServerWrapper.getServers(all, "players", false);
-				for (ServerWrapper w : list) {
-					if (ChatColor.stripColor(w.getDisplayName()).equalsIgnoreCase(args[0])) {
-						((ProxiedPlayer)sender).connect(BungeeCord.getInstance().getServerInfo(w.getDisplayName()));
-						return;
+				String name = "";
+				for (String s : args) {
+					name += s;
+				}
+				if (!name.isEmpty()) {
+					//connect
+					ArrayList<ServerWrapper> list = ServerWrapper.getServers(all, "players", false);
+					for (ServerWrapper w : list) {
+						if (ChatColor.stripColor(w.getDisplayName()).equalsIgnoreCase(name)) {
+							((ProxiedPlayer)sender).connect(BungeeCord.getInstance().getServerInfo(w.getDisplayName()));
+							return;
+						}
 					}
 				}
 				TextComponent error = new TextComponent("そのようなサーバーはオフライン又は、存在しません。");
