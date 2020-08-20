@@ -150,6 +150,7 @@ public class JoinListeners implements Listener {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onJoin(PostLoginEvent e) {
 		DBPlayer player = Tables.getPTable().get(e.getPlayer().getUniqueId());

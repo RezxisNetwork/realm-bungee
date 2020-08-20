@@ -1,7 +1,6 @@
 package net.rezxis.mchosting.bungee.commands;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;

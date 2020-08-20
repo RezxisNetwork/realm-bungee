@@ -1,6 +1,5 @@
 package net.rezxis.mchosting.bungee.commands;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;

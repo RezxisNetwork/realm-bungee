@@ -61,7 +61,6 @@ import net.rezxis.mchosting.database.Database;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.ServerWrapper;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
-import net.rezxis.mchosting.database.object.server.DBServer;
 import net.rezxis.mchosting.database.object.server.DBThirdParty;
 import net.rezxis.mchosting.network.WSClient;
 

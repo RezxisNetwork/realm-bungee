@@ -3,9 +3,7 @@ package net.rezxis.mchosting.bungee;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.java_websocket.handshake.ServerHandshake;
@@ -41,7 +39,6 @@ public class WSClientHandler implements ClientHandler {
 		Bungee.instance.ws.send(gson.toJson(new SyncAuthSocketPacket(ServerType.BUNGEE, null)));
 	}
 
-	@SuppressWarnings({"unchecked" })
 	@Override
 	public void onMessage(String message) {
 		System.out.println("Received : "+message);
