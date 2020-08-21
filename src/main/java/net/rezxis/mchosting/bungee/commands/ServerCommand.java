@@ -24,7 +24,7 @@ public class ServerCommand extends Command implements TabExecutor {
 	@Override
 	public void execute(CommandSender sender, String[] args) {
 		boolean all = false;
-		if (args.length == 1) {
+		if (args.length >= 1) {
 			if (args[0].equalsIgnoreCase("all")) {
 				all = true;
 			} else {
