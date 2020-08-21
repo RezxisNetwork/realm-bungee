@@ -8,6 +8,7 @@ import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
@@ -79,8 +80,9 @@ public class PayCommand extends Command {
 				target.setCoin(target.getCoin()+c);
 				player.update();
 				target.update();
-				sender.sendMessage(ChatColor.GREEN+(c+"RealmCoinを"+args[0]+"に送金しました。"));
-				BungeeCord.getInstance().getPlayer(target.getUUID()).sendMessage(ChatColor.GREEN+""+sender.getName()+"から"+c+"RealmCoinを受け取りました。");
+				ProxiedPlayer targetP = BungeeCord.getInstance().getPlayer(target.getUUID());
+				sender.sendMessage(ChatColor.GREEN+(c+"RealmCoinを"+targetP.getDisplayName()+"に送金しました。"));
+				targetP.sendMessage(ChatColor.GREEN+""+sender.getName()+"から"+c+"RealmCoinを受け取りました。");
 				coins.remove(player.getUUID());
 				dests.remove(player.getUUID());
 			} else {
