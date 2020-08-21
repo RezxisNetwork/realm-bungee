@@ -69,7 +69,7 @@ public class ServerCommand extends Command implements TabExecutor {
 				ServerWrapper ts = ite.next();
 				String msg = "クリックで接続";
 				msg += "\n"+ts.getMotd();
-				msg += ChatColor.AQUA+"\n投票 : "+ts.getVote();
+				msg += ChatColor.LIGHT_PURPLE+"\n投票 : "+ts.getVote();
 				TextComponent connect = new TextComponent(msg);
 				connect.setColor(ChatColor.AQUA);
 				connect.setBold(true);
