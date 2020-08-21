@@ -30,13 +30,11 @@ public class ServerCommand extends Command implements TabExecutor {
 			} else {
 				String name = "";
 				for (String s : args) {
-					System.out.println(args);
 					if (!name.isEmpty()) {
 						name += " ";
 					}
 					name += s;
 				}
-				System.out.println(name);
 				if (!name.isEmpty()) {
 					//connect
 					ArrayList<ServerWrapper> list = ServerWrapper.getServers(all, "players", false);
