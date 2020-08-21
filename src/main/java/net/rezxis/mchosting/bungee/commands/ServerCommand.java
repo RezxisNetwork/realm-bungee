@@ -30,6 +30,9 @@ public class ServerCommand extends Command implements TabExecutor {
 			} else {
 				String name = "";
 				for (String s : args) {
+					if (!name.isEmpty()) {
+						name += " ";
+					}
 					name += s;
 				}
 				if (!name.isEmpty()) {
