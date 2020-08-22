@@ -26,9 +26,9 @@ public class BuyRewardCommand extends Command {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		UUID uuid = getUUIDFromNonDashedString(args[0]);
-		ProxiedPlayer pp = BungeeCord.getInstance().getPlayer(uuid);
-		DBPlayer player = Tables.getPTable().get(uuid);
+		//UUID uuid = getUUIDFromNonDashedString(args[0]);
+		ProxiedPlayer pp = BungeeCord.getInstance().getPlayer(args[0]);//BungeeCord.getInstance().getPlayer(uuid);
+		DBPlayer player = Tables.getPTable().get(pp.getUniqueId());
 		if (Integer.valueOf(args[1]) == 0) {
 			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Japan"),Locale.JAPANESE);
 			Rank rank = Rank.valueOf(args[2]);
