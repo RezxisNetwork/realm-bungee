@@ -1,14 +1,17 @@
 package net.rezxis.mchosting.bungee.commands;
 
+import java.util.ArrayList;
+
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import net.rezxis.mchosting.bungee.KanaConverter;
 
-public class GTellCommand extends Command {
+public class GTellCommand extends Command implements TabExecutor {
 
 	private static final String prefix = ChatColor.GRAY+"[GTELL]";
 	
@@ -37,5 +40,16 @@ public class GTellCommand extends Command {
 		} else {
 			sender.sendMessage(new TextComponent(prefix+ChatColor.RED+"指定されたプレイヤーはオフラインです。"));
 		}
+	}
+
+	@Override
+	public Iterable<String> onTabComplete(CommandSender arg0, String[] args) {
+		ArrayList<String> tabs = new ArrayList<String>();
+		for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
+			if (pp.isConnected()) {
+				tabs.add(pp.getName());
+			}
+		}
+		return tabs;
 	}
 }
