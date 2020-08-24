@@ -73,10 +73,11 @@ public class ServerCommand extends Command implements TabExecutor {
 				TextComponent connect = new TextComponent(msg);
 				connect.setColor(ChatColor.AQUA);
 				connect.setBold(true);
-				TextComponent tx = new TextComponent((first ? ", " : "")+ts.getDisplayName()+ChatColor.RESET+""+ChatColor.GREEN+" ("+String.valueOf(ts.getPlayers())+")");
+				TextComponent tx = new TextComponent((first ? "" : ", ")+ts.getDisplayName()+ChatColor.RESET+""+ChatColor.GREEN+" ("+String.valueOf(ts.getPlayers())+")");
 				tx.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/server "+ChatColor.stripColor(ts.getDisplayName())));
 				tx.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[] {connect}));
 				texts.add(tx);
+				first = false;
 			}
 		}
 		TextComponent[] tcs = new TextComponent[texts.size()];
