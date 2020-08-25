@@ -256,7 +256,7 @@ public class RezxisCommand extends Command {
 			}
 			for (ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
 				if (!player.hasPermission("rezxis.admin")) {
-					player.disconnect(new TextComponent("切断されました。　理由 : "+args[1]));
+					player.disconnect(new TextComponent("切断されました。 理由 : "+args[1]));
 				}
 			}
 		}else {
