@@ -194,11 +194,6 @@ public class Bungee extends Plugin implements Listener {
 	}
 	
 	@EventHandler
-    public void onPM(PluginMessageEvent event) {
-		
-	}
-	
-	@EventHandler
 	public void onChat(ChatEvent event) {
 		ProxiedPlayer sender = (ProxiedPlayer) event.getSender();
 		for (ProxiedPlayer pp : getProxy().getPlayers()) {
