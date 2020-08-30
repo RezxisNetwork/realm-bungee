@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -25,6 +26,7 @@ import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
@@ -59,6 +61,7 @@ import net.rezxis.mchosting.bungee.tasks.AnnounceTask;
 import net.rezxis.mchosting.bungee.tasks.RewardTask;
 import net.rezxis.mchosting.database.Database;
 import net.rezxis.mchosting.database.Tables;
+import net.rezxis.mchosting.database.object.HostName;
 import net.rezxis.mchosting.database.object.ServerWrapper;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
 import net.rezxis.mchosting.database.object.server.DBThirdParty;
@@ -257,9 +260,57 @@ public class Bungee extends Plugin implements Listener {
 	
 	@EventHandler
 	public void onPing(ProxyPingEvent e) {
-		ServerPing ping = e.getResponse();
-		ping.setVersion(new Protocol("RezxisMC", 340));
-		e.setResponse(ping);
+		ServerPing eping = e.getResponse();
+		eping.setVersion(new Protocol("RezxisMC", 340));
+		e.setResponse(eping);
+		String s = null;
+		try {
+			String hostname = e.getConnection().getVirtualHost().getHostName();
+			if (hostname == null)
+				return;
+			HostName hn = Tables.getRezxisHostTable().get(hostname);
+			if (hn == null)
+				return;
+			s = hn.getDest();
+		} catch (Exception ex) {}
+		if (s != null) {
+			ServerInfo info = BungeeCord.getInstance().getServerInfo(s);
+			if (info != null) {
+				int i = PingCallBack.idd;
+				PingCallBack.idd += 1;
+				info.ping(new PingCallBack(i));
+				long time = System.currentTimeMillis();
+				boolean timeouted = false;
+				while (!PingCallBack.puted.get(i)) {
+					if (System.currentTimeMillis() - time > 1000) {
+						PingCallBack.puted.put(i, true);
+						timeouted = true;
+					}
+				}
+				Object obj = PingCallBack.pings.get(i);
+				if (obj instanceof Throwable) {
+					PingCallBack.pings.remove(i);
+					PingCallBack.puted.remove(i);
+					timeouted = true;
+				}
+				if (timeouted) {
+					ServerPing ping = e.getResponse();
+					TextComponent tc = new TextComponent("Couldn't Sync to server. maybe server is offline");
+					tc.setColor(ChatColor.RED);
+					ping.setDescriptionComponent(tc);
+					return;
+				}
+				ServerPing p1 = (ServerPing) PingCallBack.pings.get(i);
+				ServerPing ping = e.getResponse();
+				ping.setDescriptionComponent(p1.getDescriptionComponent());
+				ping.setFavicon(p1.getFaviconObject());
+				ping.setPlayers(p1.getPlayers());
+				ping.setVersion(p1.getVersion());
+				e.setResponse(ping);
+				PingCallBack.pings.remove(i);
+				PingCallBack.puted.remove(i);
+			}
+		}
 	}
 	
 	@EventHandler
@@ -278,6 +329,34 @@ public class Bungee extends Plugin implements Listener {
 			ev.setCancelled(true);
 			ev.setCancelServer(getProxy().getServerInfo("lobby"));
 			ev.getPlayer().sendMessage(new TextComponent(ev.getKickReasonComponent()));
+		}
+	}
+	
+	public static class PingCallBack implements Callback<ServerPing> {
+		
+		public static HashMap<Integer, Object> pings = new HashMap<>();
+		public static HashMap<Integer, Boolean> puted = new HashMap<>();
+		public static int idd = 0;
+		
+		public int lid;
+		
+		public PingCallBack(int id) {
+			lid = id;
+			puted.put(lid, false);
+		}
+		
+		@Override
+		public void done(ServerPing ping, Throwable ex) {
+			if (puted.getOrDefault(lid, false)) {
+				return;
+			}
+			if (ex != null) {
+				ex.printStackTrace();
+				pings.put(lid, ex);
+			} else {
+				pings.put(lid, ping);
+			}
+			puted.put(lid, true);
 		}
 	}
 }
