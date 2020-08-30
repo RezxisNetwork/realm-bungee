@@ -151,7 +151,7 @@ public class Bungee extends Plugin implements Listener {
 		messages.add(ChatColor.GREEN+"/gtell <相手> <内容> でサーバーを超えて個人chatができます。");
 		messages.add(ChatColor.GOLD+"mystery box 星4,5を開けたい？ https://stoe.rezxis.net からサポーターを買おう ！ ");
 		props = new Props("hosting.propertis");
-		Database.init(props.DB_HOST,props.DB_USER,props.DB_PASS,props.DB_PORT,props.DB_NAME);
+		//Database.init(props.DB_HOST,props.DB_USER,props.DB_PASS,props.DB_PORT,props.DB_NAME);
 		getProxy().getPluginManager().registerListener(this, this);
 		getProxy().getPluginManager().registerListener(this, new JoinListeners());
 		new Thread(()->{
