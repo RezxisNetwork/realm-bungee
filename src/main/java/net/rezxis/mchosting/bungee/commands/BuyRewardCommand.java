@@ -13,6 +13,9 @@ import net.md_5.bungee.api.plugin.Command;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
 import net.rezxis.mchosting.database.object.player.DBPlayer.Rank;
+import net.rezxis.mchosting.database.object.player.DBUUID;
+import net.rezxis.utils.WebAPI;
+import net.rezxis.utils.WebAPI.DiscordWebHookEnum;
 
 public class BuyRewardCommand extends Command {
 
@@ -28,7 +31,19 @@ public class BuyRewardCommand extends Command {
 	public void execute(CommandSender sender, String[] args) {
 		//UUID uuid = getUUIDFromNonDashedString(args[0]);
 		ProxiedPlayer pp = BungeeCord.getInstance().getPlayer(args[0]);//BungeeCord.getInstance().getPlayer(uuid);
-		DBPlayer player = Tables.getPTable().get(pp.getUniqueId());
+		UUID uuid;
+		if (pp.isConnected()) {
+			uuid = pp.getUniqueId();
+		} else {
+			DBUUID dbuid = Tables.getUTable().get(args[0]);
+			if (dbuid != null) {
+				uuid = dbuid.getUuid();
+			} else {
+				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, "@everyone [TebexPaymentGateway] Error in fetching uuid! name : "+args[0]);
+				return;
+			}
+		}
+		DBPlayer player = Tables.getPTable().get(uuid);
 		if (Integer.valueOf(args[1]) == 0) {
 			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Japan"),Locale.JAPANESE);
 			Rank rank = Rank.valueOf(args[2]);

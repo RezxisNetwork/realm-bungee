@@ -32,6 +32,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Protocol;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
@@ -174,10 +175,11 @@ public class Bungee extends Plugin implements Listener {
 		}));
 		this.getProxy().getScheduler().schedule(this, new AnnounceTask(), 1, min, TimeUnit.MINUTES);
 		this.getProxy().getScheduler().schedule(this, new RewardTask(), 1, 15, TimeUnit.MINUTES);
-		resumeServers();
+		reloadServers();
+		reload2();
 	}
 	
-	private void resumeServers() {
+	private void reloadServers() {
 		ArrayList<ServerWrapper> wrapper = ServerWrapper.getServers(true, null, false);
 		Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
 		for (ServerWrapper wrap : wrapper) {
@@ -190,6 +192,14 @@ public class Bungee extends Plugin implements Listener {
 			field.set(BungeeCord.getInstance().config, servers);
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+	
+	private void reload2() {
+		ListenerInfo li = BungeeCord.getInstance().config.getListeners().iterator().next();
+		li.getForcedHosts().clear();
+		for (HostName hn : Tables.getRezxisHostTable().getAll()) {
+			li.getForcedHosts().put(hn.getHost(), hn.getDest());
 		}
 	}
 	
