@@ -32,9 +32,7 @@ public class BuyRewardCommand extends Command {
 		//UUID uuid = getUUIDFromNonDashedString(args[0]);
 		ProxiedPlayer pp = BungeeCord.getInstance().getPlayer(args[0]);//BungeeCord.getInstance().getPlayer(uuid);
 		UUID uuid;
-		if (pp.isConnected()) {
-			uuid = pp.getUniqueId();
-		} else {
+		if (pp == null) {
 			DBUUID dbuid = Tables.getUTable().get(args[0]);
 			if (dbuid != null) {
 				uuid = dbuid.getUuid();
@@ -42,6 +40,8 @@ public class BuyRewardCommand extends Command {
 				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, "@everyone [TebexPaymentGateway] Error in fetching uuid! name : "+args[0]);
 				return;
 			}
+		} else {
+			uuid = pp.getUniqueId();
 		}
 		DBPlayer player = Tables.getPTable().get(uuid);
 		if (Integer.valueOf(args[1]) == 0) {
