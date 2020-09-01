@@ -176,7 +176,7 @@ public class Bungee extends Plugin implements Listener {
 		this.getProxy().getScheduler().schedule(this, new AnnounceTask(), 1, min, TimeUnit.MINUTES);
 		this.getProxy().getScheduler().schedule(this, new RewardTask(), 1, 15, TimeUnit.MINUTES);
 		reloadServers();
-		reload2();
+		//reload2();
 	}
 	
 	private void reloadServers() {
