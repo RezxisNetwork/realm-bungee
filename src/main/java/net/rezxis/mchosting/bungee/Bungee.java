@@ -153,7 +153,7 @@ public class Bungee extends Plugin implements Listener {
 		messages.add(ChatColor.AQUA+"現在の自分の投票ステータス /voteinfo");
 		messages.add(ChatColor.GREEN+"Ticketからの報告以外で、"+ChatColor.AQUA+"/report <内容>で報告が可能です");
 		messages.add(ChatColor.GREEN+"/gtell <相手> <内容> でサーバーを超えて個人chatができます。");
-		messages.add(ChatColor.GOLD+"mystery box 星4,5を開けたい？ https://stoe.rezxis.net からサポーターを買おう ！ ");
+		messages.add(ChatColor.GOLD+"mystery box 星4,5を開けたい？ https://store.rezxis.net からサポーターを買おう ！ ");
 		props = new Props("hosting.propertis");
 		//Database.init(props.DB_HOST,props.DB_USER,props.DB_PASS,props.DB_PORT,props.DB_NAME);
 		getProxy().getPluginManager().registerListener(this, this);

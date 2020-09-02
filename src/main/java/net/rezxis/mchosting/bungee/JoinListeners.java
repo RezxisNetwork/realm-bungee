@@ -44,7 +44,7 @@ public class JoinListeners implements Listener {
 			first = true;
 			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Japan"),Locale.JAPANESE);
 			calendar.add(Calendar.DAY_OF_WEEK, -2);
-			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), calendar.getTime(), true, false ,"",false,false,new Date(),"",0,"",-1);
+			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), calendar.getTime(), true, false ,"",false,false,new Date(),"",0,"",-1, "");
 			Tables.getPTable().insert(player);
 		}
 		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
@@ -178,10 +178,6 @@ public class JoinListeners implements Listener {
 			e.getPlayer().setPermission("rezxis.rank", false);
 		}
 		player.setOnline(true);
-		if (player.isExpiredSupporter() && player.isSupporter()) {
-			e.getPlayer().sendMessage(new TextComponent(ChatColor.RED+"あなたのサポーターランク期限は切れました。 期限 : "+player.getSupporterExpire().toLocaleString()));
-			player.setSupporter(false);
-		}
 		player.update();
 	}
 	
