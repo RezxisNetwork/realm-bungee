@@ -200,6 +200,7 @@ public class Bungee extends Plugin implements Listener {
 		li.getForcedHosts().clear();
 		for (HostName hn : Tables.getRezxisHostTable().getAll()) {
 			li.getForcedHosts().put(hn.getHost(), hn.getDest());
+			System.out.println(hn.getHost()+","+hn.getDest());
 		}
 	}
 	
