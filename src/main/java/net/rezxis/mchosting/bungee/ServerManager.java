@@ -2,6 +2,7 @@ package net.rezxis.mchosting.bungee;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.config.ListenerInfo;
@@ -26,6 +27,12 @@ public class ServerManager {
 					bcs.getMotd(), bcs.isRestricted());
 			servers.put(bcs.getId(), info);
 			BungeeCord.getInstance().getServers().put(bcs.getName(), info);
+		}
+		for (Entry<Integer, ServerInfo> e : servers.entrySet()) {
+			BungeeCordServer s = Tables.getBungeeCordServersTable().getServerFromID(e.getKey());
+			if (s == null) {
+				BungeeCord.getInstance().getServers().remove(e.getValue().getName());
+			}
 		}
 	}
 
