@@ -12,6 +12,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.rezxis.mchosting.bungee.Bungee;
+import net.rezxis.mchosting.bungee.ServerManager;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.player.DBIP;
 import net.rezxis.mchosting.database.object.player.DBPIP;
@@ -259,7 +260,11 @@ public class RezxisCommand extends Command {
 					player.disconnect(new TextComponent("切断されました。 理由 : "+args[1]));
 				}
 			}
-		}else {
+		} else if (args[0].equalsIgnoreCase("reloadHosts")) {
+			ServerManager.reloadForcesHost();
+			ServerManager.reloadServers();
+			sender.sendMessage(new TextComponent(ChatColor.GREEN+"Reloaded hosts"));
+		} else {
 			sender.sendMessage(new TextComponent(ChatColor.RED+"commandが存在しません。"));
 		}
 	}

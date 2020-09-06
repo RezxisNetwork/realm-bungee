@@ -32,13 +32,11 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.ServerPing.Protocol;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
@@ -60,7 +58,6 @@ import net.rezxis.mchosting.bungee.commands.ServerCommand;
 import net.rezxis.mchosting.bungee.commands.VoteCommand;
 import net.rezxis.mchosting.bungee.tasks.AnnounceTask;
 import net.rezxis.mchosting.bungee.tasks.RewardTask;
-import net.rezxis.mchosting.database.Database;
 import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.HostName;
 import net.rezxis.mchosting.database.object.ServerWrapper;
@@ -176,7 +173,8 @@ public class Bungee extends Plugin implements Listener {
 		this.getProxy().getScheduler().schedule(this, new AnnounceTask(), 1, min, TimeUnit.MINUTES);
 		this.getProxy().getScheduler().schedule(this, new RewardTask(), 1, 15, TimeUnit.MINUTES);
 		reloadServers();
-		reload2();
+		ServerManager.reloadForcesHost();
+		ServerManager.reloadServers();
 	}
 	
 	private void reloadServers() {
@@ -192,15 +190,6 @@ public class Bungee extends Plugin implements Listener {
 			field.set(BungeeCord.getInstance().config, servers);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-		}
-	}
-	
-	private void reload2() {
-		ListenerInfo li = BungeeCord.getInstance().config.getListeners().iterator().next();
-		li.getForcedHosts().clear();
-		for (HostName hn : Tables.getRezxisHostTable().getAll()) {
-			li.getForcedHosts().put(hn.getHost(), hn.getDest());
-			System.out.println(hn.getHost()+","+hn.getDest());
 		}
 	}
 	

@@ -34,7 +34,6 @@ import net.rezxis.mchosting.database.object.player.DBPlayer.Rank;
 import net.rezxis.mchosting.database.tables.UuidTable;
 
 public class JoinListeners implements Listener {
-
 	
 	@EventHandler
 	public void onJoin(LoginEvent e) {
