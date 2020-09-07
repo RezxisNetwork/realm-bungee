@@ -1,19 +1,24 @@
 package net.rezxis.mchosting.bungee.tasks;
 
-import java.util.Random;
 
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.rezxis.mchosting.bungee.Bungee;
 
 public class AnnounceTask implements Runnable {
 
-	@SuppressWarnings("deprecation")
+	private static int i = 0;
+	
 	@Override
 	public void run() {
-		String msg = Bungee.instance.messages.get(new Random().nextInt(Bungee.instance.messages.size()-1));
+		if (i > Bungee.instance.messages.size()) {
+			i = 1;
+		}
+		TextComponent msg = Bungee.instance.messages.get(i - 1);
 		for (ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
 			player.sendMessage(msg);
 		}
+		i++;
 	}
 }
