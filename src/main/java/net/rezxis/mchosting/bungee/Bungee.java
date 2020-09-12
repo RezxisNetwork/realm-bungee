@@ -30,6 +30,7 @@ import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
+import net.md_5.bungee.api.ServerPing.PlayerInfo;
 import net.md_5.bungee.api.ServerPing.Protocol;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -63,7 +64,9 @@ import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.database.object.HostName;
 import net.rezxis.mchosting.database.object.ServerWrapper;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
+import net.rezxis.mchosting.database.object.server.DBServer;
 import net.rezxis.mchosting.database.object.server.DBThirdParty;
+import net.rezxis.mchosting.database.object.server.ServerStatus;
 import net.rezxis.mchosting.network.WSClient;
 
 public class Bungee extends Plugin implements Listener {
@@ -268,14 +271,31 @@ public class Bungee extends Plugin implements Listener {
 			String hostname = e.getConnection().getVirtualHost().getHostName();
 			if (hostname == null)
 				return;
-			HostName hn = Tables.getRezxisHostTable().get(hostname);
-			if (hn == null)
-				return;
-			s = hn.getDest();
-			if (!hn.isPing())
-				return;
+			if (hostname.toLowerCase().endsWith(".direct.rezxis.net")) {
+				DBServer ds = Tables.getSTable().getServerByDirect(hostname.replace(".direct.rezxis.net", ""));
+				if (ds != null && ds.getStatus() == ServerStatus.RUNNING) {
+					s = ds.getDisplayName();
+				} else {
+					s = "nullServer";
+				}
+			} else {
+				HostName hn = Tables.getRezxisHostTable().get(hostname);
+				if (hn == null)
+					return;
+				s = hn.getDest();
+				if (!hn.isPing())
+					return;
+			}
+			
 		} catch (Exception ex) {}
 		if (s != null) {
+			if (s.equalsIgnoreCase("nullServer")) {
+				ServerPing ping = e.getResponse();
+				ping.setDescriptionComponent(new TextComponent(ChatColor.RED+"this server is offline."));
+				ping.setPlayers(new ServerPing.Players(0, 0, new PlayerInfo[0]));
+				e.setResponse(ping);
+				return;
+			}
 			ServerInfo info = BungeeCord.getInstance().getServerInfo(s);
 			if (info != null) {
 				int i = PingCallBack.idd;

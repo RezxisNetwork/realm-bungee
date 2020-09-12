@@ -60,7 +60,7 @@ public class VoteCommand extends Command {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			    pp.getServer().sendData("rezxis", stream.toByteArray());
+			    pp.getServer().sendData("rezxis:rezxis", stream.toByteArray());
 			}
 		}
 	}

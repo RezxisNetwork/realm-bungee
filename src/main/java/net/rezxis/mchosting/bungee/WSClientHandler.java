@@ -18,6 +18,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.conf.Configuration;
+import net.rezxis.mchosting.database.Tables;
 import net.rezxis.mchosting.network.ClientHandler;
 import net.rezxis.mchosting.network.packet.Packet;
 import net.rezxis.mchosting.network.packet.PacketType;
@@ -61,6 +62,7 @@ public class WSClientHandler implements ClientHandler {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+			ServerManager.started(Tables.getSTable().getServerByName(signal.displayName));
 		} else if (type == PacketType.ServerStopped) {
 			BungServerStopped signal = gson.fromJson(message, BungServerStopped.class);
 			try {
@@ -72,6 +74,7 @@ public class WSClientHandler implements ClientHandler {
 			} catch(Exception ex) {
 				ex.printStackTrace();
 			}
+			ServerManager.stopped(Tables.getSTable().getServerByName(signal.name));
 		} else if (type == PacketType.PlayerSendPacket) {
 			BungPlayerSendPacket signal = gson.fromJson(message, BungPlayerSendPacket.class);
 			ProxiedPlayer p = BungeeCord.getInstance().getPlayer(UUID.fromString(signal.player));

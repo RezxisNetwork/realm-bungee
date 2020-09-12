@@ -29,7 +29,7 @@ import net.rezxis.mchosting.database.object.player.DBPlayer;
 import net.rezxis.mchosting.database.object.player.DBUUID;
 import net.rezxis.utils.WebAPI;
 import net.rezxis.utils.WebAPI.DiscordWebHookEnum;
-import net.rezxis.utils.WebAPI.McuaResponse;
+import net.rezxis.utils.WebAPI.CheckIPResponse;
 import net.rezxis.mchosting.database.object.player.DBPlayer.Rank;
 import net.rezxis.mchosting.database.tables.UuidTable;
 
@@ -64,7 +64,7 @@ public class JoinListeners implements Listener {
 			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
 				public void run() {
 					try {
-						McuaResponse response = WebAPI.checkIP(ip);
+						CheckIPResponse response = WebAPI.checkIP(ip);
 						if (response.isBad() || !response.getCountry().equalsIgnoreCase("JP")) {
 							BungeeCord.getInstance().getPlayer(e.getConnection().getUniqueId()).disconnect(new TextComponent(ChatColor.RED+"あなたのIPアドレスはブロックされています。"));
 							String msg = "[VPN] - username : ("+e.getConnection().getName()+") , Address : ("+ip+") , Type : ("+response.getType()+") , Country : ("+response.getCountry()+")";
