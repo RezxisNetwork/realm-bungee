@@ -43,7 +43,9 @@ public class ServerManager {
 		ListenerInfo li = BungeeCord.getInstance().config.getListeners().iterator().next();
 		li.getForcedHosts().clear();
 		for (Entry<Integer, String> data : realms.entrySet()) {
-			li.getForcedHosts().put(data.getValue()+".direct.rezxis.net", Tables.getSTable().getByID(data.getKey()).getDisplayName());
+			DBServer s = Tables.getSTable().getByID(data.getKey());
+			if (s != null)
+				li.getForcedHosts().put(data.getValue()+".direct.rezxis.net", s.getDisplayName());
 		}
 		for (HostName hn : Tables.getRezxisHostTable().getAll()) {
 			li.getForcedHosts().put(hn.getHost(), hn.getDest());
@@ -51,12 +53,16 @@ public class ServerManager {
 	}
 	
 	public static void started(DBServer server) {
+		if (server == null)
+			return;
 		realms.put(server.getId(), server.getDirect());
 		//realmServers.put(server.getDirect()+".direct.rezxis.net", BungeeCord.getInstance().getServerInfo(server.getDisplayName()));
 		reloadForcesHost();
 	}
 	
 	public static void stopped(DBServer server) {
+		if (server == null)
+			return;
 		realms.remove(server.getId());
 		reloadForcesHost();
 	}
