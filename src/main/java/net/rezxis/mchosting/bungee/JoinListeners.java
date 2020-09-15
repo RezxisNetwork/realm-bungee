@@ -65,7 +65,7 @@ public class JoinListeners implements Listener {
 				public void run() {
 					try {
 						CheckIPResponse response = WebAPI.checkIP(ip);
-						if (response.isBad() || !response.getCountry().equalsIgnoreCase("JP")) {
+						if (response.isBad()) {
 							BungeeCord.getInstance().getPlayer(e.getConnection().getUniqueId()).disconnect(new TextComponent(ChatColor.RED+"あなたのIPアドレスはブロックされています。"));
 							String msg = "[VPN] - username : ("+e.getConnection().getName()+") , Address : ("+ip+") , Type : ("+response.getType()+") , Country : ("+response.getCountry()+")";
 							for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
