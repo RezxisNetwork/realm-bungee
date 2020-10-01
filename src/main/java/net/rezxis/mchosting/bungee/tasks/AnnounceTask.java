@@ -12,10 +12,10 @@ public class AnnounceTask implements Runnable {
 	
 	@Override
 	public void run() {
-		if (i > Bungee.instance.messages.size()) {
-			i = 1;
+		if (i == Bungee.instance.messages.size()) {
+			i = 0;
 		}
-		TextComponent msg = Bungee.instance.messages.get(i - 1);
+		TextComponent msg = Bungee.instance.messages.get(i);
 		for (ProxiedPlayer player : BungeeCord.getInstance().getPlayers()) {
 			player.sendMessage(msg);
 		}
