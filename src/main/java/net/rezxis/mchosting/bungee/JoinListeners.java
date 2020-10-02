@@ -37,6 +37,12 @@ public class JoinListeners implements Listener {
 	
 	@EventHandler
 	public void onJoin(LoginEvent e) {
+		if (Bungee.instance.maintenance) {
+			TextComponent tc = new TextComponent("rezxis is under maintenance");
+			tc.setColor(ChatColor.RED);
+			e.getConnection().disconnect(tc);
+			return;
+		}
 		boolean first = false;
 		DBPlayer player = Tables.getPTable().get(e.getConnection().getUniqueId());
 		if (player == null) {

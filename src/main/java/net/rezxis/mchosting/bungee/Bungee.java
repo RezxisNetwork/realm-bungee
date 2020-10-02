@@ -80,6 +80,7 @@ public class Bungee extends Plugin implements Listener {
 	public static RestHighLevelClient rcl = null;
 	public static final RequestOptions COMMON_OPTIONS;
 	public boolean logging = true;
+	public boolean maintenance = false;
 	
 	public static ActionListener<IndexResponse> listener = new ActionListener<IndexResponse>() {
         @Override
@@ -180,6 +181,7 @@ public class Bungee extends Plugin implements Listener {
 		}));
 		this.getProxy().getScheduler().schedule(this, new AnnounceTask(), 1, min, TimeUnit.MINUTES);
 		this.getProxy().getScheduler().schedule(this, new RewardTask(), 1, 15, TimeUnit.MINUTES);
+		this.maintenance = Boolean.valueOf(Tables.getRezxisKVTable().get("maintenance").getValue());
 		reloadServers();
 		ServerManager.reloadForcesHost();
 		ServerManager.reloadServers();
@@ -265,6 +267,13 @@ public class Bungee extends Plugin implements Listener {
 	public void onPing(ProxyPingEvent e) {
 		ServerPing eping = e.getResponse();
 		eping.setVersion(new Protocol("RezxisMC", 340));
+		if (Bungee.instance.maintenance) {
+			TextComponent tc = new TextComponent("rezxis is under maintenance");
+			tc.setColor(ChatColor.RED);
+			eping.setDescriptionComponent(tc);
+			e.setResponse(eping);
+			return;
+		}
 		e.setResponse(eping);
 		String s = null;
 		try {

@@ -14,6 +14,7 @@ import net.md_5.bungee.api.plugin.Command;
 import net.rezxis.mchosting.bungee.Bungee;
 import net.rezxis.mchosting.bungee.ServerManager;
 import net.rezxis.mchosting.database.Tables;
+import net.rezxis.mchosting.database.object.KeyValue;
 import net.rezxis.mchosting.database.object.player.DBIP;
 import net.rezxis.mchosting.database.object.player.DBPIP;
 import net.rezxis.mchosting.database.object.player.DBPlayer;
@@ -264,6 +265,12 @@ public class RezxisCommand extends Command {
 			ServerManager.reloadForcesHost();
 			ServerManager.reloadServers();
 			sender.sendMessage(new TextComponent(ChatColor.GREEN+"Reloaded hosts"));
+		} else if (args[0].equalsIgnoreCase("maintenance")) {
+			Bungee.instance.maintenance = !Bungee.instance.maintenance;
+			KeyValue kv = Tables.getRezxisKVTable().get("maintenance");
+			kv.setValue(String.valueOf(Bungee.instance.maintenance));
+			kv.update();
+			sender.sendMessage(new TextComponent(ChatColor.GREEN+"maintenance mode : "+Bungee.instance.maintenance));
 		} else {
 			sender.sendMessage(new TextComponent(ChatColor.RED+"commandが存在しません。"));
 		}
