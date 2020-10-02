@@ -282,10 +282,12 @@ public class RezxisCommand extends Command {
 					for (int i = 0; i < time; i++) {
 						try {
 							Thread.sleep(1000);
-							if (time != i) {
-								TextComponent tcc = new TextComponent("[Rezxis] " + time + "分後にProxyの再起動が実施されます。");
-								tcc.setColor(ChatColor.RED);
-								BungeeCord.getInstance().broadcast(tcc);
+							if (time % 60 == 0) {
+								if (time != i) {
+									TextComponent tcc = new TextComponent("[Rezxis] " + (time/60) + "分後にProxyの再起動が実施されます。");
+									tcc.setColor(ChatColor.RED);
+									BungeeCord.getInstance().broadcast(tcc);
+								}
 							}
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
