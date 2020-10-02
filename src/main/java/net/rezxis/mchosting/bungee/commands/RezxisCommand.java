@@ -271,6 +271,29 @@ public class RezxisCommand extends Command {
 			kv.setValue(String.valueOf(Bungee.instance.maintenance));
 			kv.update();
 			sender.sendMessage(new TextComponent(ChatColor.GREEN+"maintenance mode : "+Bungee.instance.maintenance));
+		} else if (args[0].equalsIgnoreCase("restart")) {
+			final int time = Integer.valueOf(args[1]) * 60;
+			TextComponent tc = new TextComponent("[Rezxis] " + time + "分後にProxyの再起動が実施されます。");
+			tc.setColor(ChatColor.RED);
+			BungeeCord.getInstance().broadcast(tc);
+			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
+				@Override
+				public void run() {
+					for (int i = 0; i < time; i++) {
+						try {
+							Thread.sleep(1000);
+							if (time != i) {
+								TextComponent tcc = new TextComponent("[Rezxis] " + time + "分後にProxyの再起動が実施されます。");
+								tcc.setColor(ChatColor.RED);
+								BungeeCord.getInstance().broadcast(tcc);
+							}
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					BungeeCord.getInstance().stop("Scheduled proxy restart.");
+				}});
 		} else {
 			sender.sendMessage(new TextComponent(ChatColor.RED+"commandが存在しません。"));
 		}
