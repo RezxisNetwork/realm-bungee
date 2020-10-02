@@ -30,13 +30,16 @@ public class GTellCommand extends Command implements TabExecutor {
 			String s = sender.getName();
 			String message = "";
 			for (int i = 1; i < args.length; i++) {
-				message += " "+args[i];
+				if (i != 1) {
+					message += " ";
+				}
+				message += args[i];
 			}
 			message = message.replace("&", "§");
 			if (!message.startsWith("#")) {
 				message = KanaConverter.fixBrackets(KanaConverter.conv(message));
 			}
-			TextComponent comp = new TextComponent(prefix+"["+s+"->"+player.getName()+"]"+message);
+			TextComponent comp = new TextComponent(prefix+"["+s+"->"+player.getName()+"] "+message);
 			sender.sendMessage(comp);
 			player.sendMessage(comp);
 		} else {
