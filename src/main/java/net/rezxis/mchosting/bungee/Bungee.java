@@ -282,11 +282,11 @@ public class Bungee extends Plugin implements Listener {
 				return;
 			if (hostname.toLowerCase().endsWith(".direct.rezxis.net")) {
 				DBServer ds = Tables.getSTable().getServerByDirect(hostname.replace(".direct.rezxis.net", ""));
-				if (ds != null && ds.getStatus() == ServerStatus.RUNNING) {
+				if (ds != null && ds.getStatus() == ServerStatus.RUNNING)
 					s = ds.getDisplayName();
-				} else {
+				else
 					s = "nullServer";
-				}
+				
 			} else {
 				HostName hn = Tables.getRezxisHostTable().get(hostname);
 				if (hn == null)
@@ -378,14 +378,12 @@ public class Bungee extends Plugin implements Listener {
 		
 		@Override
 		public void done(ServerPing ping, Throwable ex) {
-			if (puted.getOrDefault(lid, false)) {
+			if (puted.getOrDefault(lid, false))
 				return;
-			}
-			if (ex != null) {
+			if (ex != null)
 				pings.put(lid, ex);
-			} else {
+			else
 				pings.put(lid, ping);
-			}
 			puted.put(lid, true);
 		}
 	}
