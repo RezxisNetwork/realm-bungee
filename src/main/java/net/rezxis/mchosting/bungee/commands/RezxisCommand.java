@@ -271,9 +271,11 @@ public class RezxisCommand extends Command {
 			kv.setValue(String.valueOf(Bungee.instance.maintenance));
 			kv.update();
 			sender.sendMessage(new TextComponent(ChatColor.GREEN+"maintenance mode : "+Bungee.instance.maintenance));
-			for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
-				if (pp.isConnected())
-					pp.disconnect(new TextComponent(ChatColor.RED+"rezxis is under maintenance mode"));
+			if (Bungee.instance.maintenance) {
+				for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
+					if (pp.isConnected())
+						pp.disconnect(new TextComponent(ChatColor.RED+"rezxis is under maintenance mode"));
+				}
 			}
 		} else if (args[0].equalsIgnoreCase("restart")) {
 			final int time = Integer.valueOf(args[1]);
