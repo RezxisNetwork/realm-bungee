@@ -34,22 +34,21 @@ public class BuyRewardCommand extends Command {
 		UUID uuid;
 		if (pp == null) {
 			DBUUID dbuid = Tables.getUTable().get(args[0]);
-			if (dbuid != null) {
+			if (dbuid != null)
 				uuid = dbuid.getUuid();
-			} else {
+			else {
 				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, "@everyone [TebexPaymentGateway] Error in fetching uuid! name : "+args[0]);
 				return;
 			}
-		} else {
+		} else
 			uuid = pp.getUniqueId();
-		}
+		
 		DBPlayer player = Tables.getPTable().get(uuid);
 		if (Integer.valueOf(args[1]) == 0) {
 			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Japan"),Locale.JAPANESE);
 			Rank rank = Rank.valueOf(args[2]);
-			if (player.getRank() == rank && !player.isExpiredRank()) {
+			if (player.getRank() == rank && !player.isExpiredRank())
 				calendar.setTime(player.getRankExpire());
-			}
 			calendar.add(Calendar.MONTH, 1);
 			player.setRank(rank);
 			player.setRankExpire(calendar.getTime());

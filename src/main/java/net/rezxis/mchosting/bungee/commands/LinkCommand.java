@@ -30,8 +30,7 @@ public class LinkCommand extends Command {
 			dp.update();
 			sender.sendMessage(new TextComponent(ChatColor.GREEN+"Link Code : "+key));
 			sender.sendMessage(new TextComponent(ChatColor.GREEN+"#discord-link で</link "+key+">をしてください。"));
-		} else {
+		} else
 			sender.sendMessage(new TextComponent(ChatColor.RED+"this command must be ran by player"));
-		}
 	}
 }

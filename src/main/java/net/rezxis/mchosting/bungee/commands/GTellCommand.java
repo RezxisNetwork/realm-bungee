@@ -30,31 +30,28 @@ public class GTellCommand extends Command implements TabExecutor {
 			String s = sender.getName();
 			String message = "";
 			for (int i = 1; i < args.length; i++) {
-				if (i != 1) {
+				if (i != 1)
 					message += " ";
-				}
 				message += args[i];
 			}
 			message = message.replace("&", "§");
-			if (!message.startsWith("#")) {
+			if (!message.startsWith("#"))
 				message = KanaConverter.fixBrackets(KanaConverter.conv(message));
-			}
+			if (message.startsWith("#"))
+				message = message.replaceFirst("#", "");
 			TextComponent comp = new TextComponent(prefix+"["+s+"->"+player.getName()+"] "+message);
 			sender.sendMessage(comp);
 			player.sendMessage(comp);
-		} else {
+		} else
 			sender.sendMessage(new TextComponent(prefix+ChatColor.RED+"指定されたプレイヤーはオフラインです。"));
-		}
 	}
 
 	@Override
 	public Iterable<String> onTabComplete(CommandSender arg0, String[] args) {
 		ArrayList<String> tabs = new ArrayList<String>();
-		for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
-			if (pp.isConnected()) {
+		for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers())
+			if (pp.isConnected())
 				tabs.add(pp.getName());
-			}
-		}
 		return tabs;
 	}
 }
