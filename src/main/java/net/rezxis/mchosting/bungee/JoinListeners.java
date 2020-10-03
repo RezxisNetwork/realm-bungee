@@ -37,12 +37,6 @@ public class JoinListeners implements Listener {
 	
 	@EventHandler
 	public void onJoin(LoginEvent e) {
-		if (Bungee.instance.maintenance) {
-			TextComponent tc = new TextComponent("rezxis is under maintenance");
-			tc.setColor(ChatColor.RED);
-			e.getConnection().disconnect(tc);
-			return;
-		}
 		boolean first = false;
 		DBPlayer player = Tables.getPTable().get(e.getConnection().getUniqueId());
 		if (player == null) {
@@ -51,6 +45,14 @@ public class JoinListeners implements Listener {
 			calendar.add(Calendar.DAY_OF_WEEK, -2);
 			player = new DBPlayer(-1, e.getConnection().getUniqueId(), Rank.NORMAL, 0, false, new Date(), calendar.getTime(), true, false ,"",false,false,new Date(),"",0,"",-1, "");
 			Tables.getPTable().insert(player);
+		}
+		if (Bungee.instance.maintenance) {
+			if (player.getRank() != DBPlayer.Rank.DEVELOPER) {
+				TextComponent tc = new TextComponent("rezxis is under maintenance mode");
+				tc.setColor(ChatColor.RED);
+				e.getConnection().disconnect(tc);
+				return;
+			}
 		}
 		String ip = e.getConnection().getAddress().getAddress().getHostAddress();
 		//check multi connection;
