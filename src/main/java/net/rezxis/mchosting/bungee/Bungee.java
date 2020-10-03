@@ -326,7 +326,7 @@ public class Bungee extends Plugin implements Listener {
 				}
 				if (timeouted) {
 					ServerPing ping = e.getResponse();
-					TextComponent tc = new TextComponent("Couldn't Sync to server. maybe server is offline");
+					TextComponent tc = new TextComponent("this server is offline.");
 					tc.setColor(ChatColor.RED);
 					ping.setDescriptionComponent(tc);
 					return;
@@ -382,7 +382,6 @@ public class Bungee extends Plugin implements Listener {
 				return;
 			}
 			if (ex != null) {
-				ex.printStackTrace();
 				pings.put(lid, ex);
 			} else {
 				pings.put(lid, ping);
