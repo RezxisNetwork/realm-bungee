@@ -66,7 +66,7 @@ public class JoinListeners implements Listener {
 		}
 		if (accs >= 5) {
 			e.setCancelled(true);
-			e.setCancelReason(ChatColor.RED+"同時接続はできません。");
+			e.setCancelReason(ChatColor.RED+"5アカウント以上の同時接続はできません。");
 		}
 		if (!player.isVpnBypass()) {
 			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
