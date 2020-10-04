@@ -283,7 +283,7 @@ public class Bungee extends Plugin implements Listener {
 			if (hostname.toLowerCase().endsWith(".direct.rezxis.net")) {
 				DBServer ds = Tables.getSTable().getServerByDirect(hostname.replace(".direct.rezxis.net", ""));
 				if (ds != null && ds.getStatus() == ServerStatus.RUNNING)
-					s = ds.getMotd();
+					s = ds.getDisplayName();
 				else
 					s = "nullServer";
 				
