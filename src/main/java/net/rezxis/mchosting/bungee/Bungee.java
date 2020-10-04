@@ -283,7 +283,7 @@ public class Bungee extends Plugin implements Listener {
 			if (hostname.toLowerCase().endsWith(".direct.rezxis.net")) {
 				DBServer ds = Tables.getSTable().getServerByDirect(hostname.replace(".direct.rezxis.net", ""));
 				if (ds != null && ds.getStatus() == ServerStatus.RUNNING)
-					s = ds.getDisplayName();
+					s = ds.getMotd();
 				else
 					s = "nullServer";
 				
@@ -329,6 +329,7 @@ public class Bungee extends Plugin implements Listener {
 					TextComponent tc = new TextComponent("this server is offline.");
 					tc.setColor(ChatColor.RED);
 					ping.setDescriptionComponent(tc);
+					ping.setPlayers(new ServerPing.Players(0, 0, new PlayerInfo[0]));
 					return;
 				}
 				ServerPing p1 = (ServerPing) PingCallBack.pings.get(i);
