@@ -81,6 +81,10 @@ public class JoinListeners implements Listener {
 									pp.sendMessage(new TextComponent(ChatColor.RED+msg));
 							}
 							WebAPI.webhook(DiscordWebHookEnum.CONNECT, msg);
+							DBPlayer dp = Tables.getPTable().get(e.getConnection().getUniqueId());
+							dp.setBan(true);
+							dp.setReason(ChatColor.RED+"vpn was detected.");
+							dp.update();
 							return;
 						}
 						if (!response.getCountry().equalsIgnoreCase("JP")) {
