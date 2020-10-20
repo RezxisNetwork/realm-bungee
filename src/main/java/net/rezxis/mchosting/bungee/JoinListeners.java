@@ -87,7 +87,10 @@ public class JoinListeners implements Listener {
 							dp.update();
 							return;
 						}
-						if (!response.getCountry().equalsIgnoreCase("JP") && !response.getCountry().equalsIgnoreCase("OpenVPN")) {
+						if (!response.getCountry().equalsIgnoreCase("JP")) {
+							if (response.getCountry().equalsIgnoreCase("OpenVPN")) {
+								return;
+							}
 							BungeeCord.getInstance().getPlayer(e.getConnection().getUniqueId()).disconnect(new TextComponent(ChatColor.RED+"国外からの接続はブロックされています。"));
 							return;
 						}
