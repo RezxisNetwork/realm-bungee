@@ -83,6 +83,10 @@ public class JoinListeners implements Listener {
 							WebAPI.webhook(DiscordWebHookEnum.CONNECT, msg);
 							return;
 						}
+						if (!response.getCountry().equalsIgnoreCase("JP")) {
+							BungeeCord.getInstance().getPlayer(e.getConnection().getUniqueId()).disconnect(new TextComponent(ChatColor.RED+"国外からの接続はブロックされています。"));
+							return;
+						}
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
