@@ -346,13 +346,6 @@ public class Bungee extends Plugin implements Listener {
 	}
 	
 	@EventHandler
-	public void onLeft(PlayerDisconnectEvent e) {
-		DBPlayer player = Tables.getPTable().get(e.getPlayer().getUniqueId());
-		player.setOnline(false);
-		player.update();
-	}
-	
-	@EventHandler
     public void onServerKickEvent(ServerKickEvent ev) {
 		Server server = ev.getPlayer().getServer();
 		if (server == null)

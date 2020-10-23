@@ -48,9 +48,8 @@ public class JoinListeners implements Listener {
 		}
 		if (Bungee.instance.maintenance) {
 			if (player.getRank() != DBPlayer.Rank.DEVELOPER) {
-				TextComponent tc = new TextComponent("rezxis is under maintenance mode");
-				tc.setColor(ChatColor.RED);
-				e.getConnection().disconnect(tc);
+				e.setCancelled(true);
+				e.setCancelReason(ChatColor.RED+"rezxis is under maintenance mode");
 				return;
 			}
 		}
@@ -67,6 +66,7 @@ public class JoinListeners implements Listener {
 		if (accs >= 5) {
 			e.setCancelled(true);
 			e.setCancelReason(ChatColor.RED+"5アカウント以上の同時接続はできません。");
+			return;
 		}
 		if (!player.isVpnBypass()) {
 			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
@@ -74,7 +74,6 @@ public class JoinListeners implements Listener {
 					try {
 						CheckIPResponse response = WebAPI.checkIP(ip);
 						if (response.isBad()) {
-							BungeeCord.getInstance().getPlayer(e.getConnection().getUniqueId()).disconnect(new TextComponent(ChatColor.RED+"あなたのIPアドレスはブロックされています。"));
 							String msg = "[VPN] - username : ("+e.getConnection().getName()+") , Address : ("+ip+") , Type : ("+response.getType()+") , Country : ("+response.getCountry()+")";
 							for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
 								if (pp.hasPermission("rezxis.admin"))
@@ -85,13 +84,16 @@ public class JoinListeners implements Listener {
 							dp.setBan(true);
 							dp.setReason(ChatColor.RED+"vpn was detected.");
 							dp.update();
+							e.setCancelled(true);
+							e.setCancelReason(ChatColor.RED+"あなたのIPアドレスはブロックされています。");
 							return;
 						}
 						if (!response.getCountry().equalsIgnoreCase("JP")) {
 							if (response.getCountry().equalsIgnoreCase("OpenVPN")) {
 								return;
 							}
-							BungeeCord.getInstance().getPlayer(e.getConnection().getUniqueId()).disconnect(new TextComponent(ChatColor.RED+"国外からの接続はブロックされています。"));
+							e.setCancelled(true);
+							e.setCancelReason(ChatColor.RED+"国外からの接続はブロックされています。");
 							return;
 						}
 					} catch (Exception ex) {
@@ -108,7 +110,6 @@ public class JoinListeners implements Listener {
 			dbuid.setName(e.getConnection().getName());
 			dbuid.update();
 		}
-		
 		if (player.isBan()) {
 			e.setCancelled(true);
 			e.setCancelReason(ChatColor.RED+player.getReason());
@@ -123,6 +124,20 @@ public class JoinListeners implements Listener {
 		if (dbpip == null) {
 			dbpip = new DBPIP(-1,dbip.getId(),player.getId());
 			Tables.getPipTable().insert(dbpip);
+			if (!first) {
+				ArrayList<DBPIP> pips = Tables.getPipTable().getAllIPPlayer(player.getId());
+				StringBuilder sb = new StringBuilder("New ip link : "+e.getConnection().getName()+" Info\n");
+				for (DBPIP pip : pips) {
+					DBIP dip = Tables.getIpTable().getFromID(pip.getIp());
+					sb.append("ip : "+dip.getIp()+"\n");
+					ArrayList<DBPIP> targets = Tables.getPipTable().getAllfromIP(dip.getId());
+					for (DBPIP spip : targets) {
+						DBPlayer target = Tables.getPTable().getFromID(spip.getPlayer());
+						sb.append("-"+UuidTable.instnace.get(target.getUUID()).getName()+"\n");
+					}
+				}
+				WebAPI.webhook(DiscordWebHookEnum.PRIVATE, sb.toString());
+			}
 		}
 		if (dbip.isBanned()) {
 			e.setCancelled(true);
@@ -220,5 +235,8 @@ public class JoinListeners implements Listener {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		DBPlayer player = Tables.getPTable().get(event.getPlayer().getUniqueId());
+		player.setOnline(false);
+		player.update();
 	}
 }
