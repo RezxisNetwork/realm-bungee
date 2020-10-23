@@ -68,40 +68,6 @@ public class JoinListeners implements Listener {
 			e.setCancelReason(ChatColor.RED+"5アカウント以上の同時接続はできません。");
 			return;
 		}
-		if (!player.isVpnBypass()) {
-			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
-				public void run() {
-					try {
-						CheckIPResponse response = WebAPI.checkIP(ip);
-						if (response.isBad()) {
-							String msg = "[VPN] - username : ("+e.getConnection().getName()+") , Address : ("+ip+") , Type : ("+response.getType()+") , Country : ("+response.getCountry()+")";
-							for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
-								if (pp.hasPermission("rezxis.admin"))
-									pp.sendMessage(new TextComponent(ChatColor.RED+msg));
-							}
-							WebAPI.webhook(DiscordWebHookEnum.CONNECT, msg);
-							DBPlayer dp = Tables.getPTable().get(e.getConnection().getUniqueId());
-							dp.setBan(true);
-							dp.setReason(ChatColor.RED+"vpn was detected.");
-							dp.update();
-							e.setCancelled(true);
-							e.setCancelReason(ChatColor.RED+"あなたのIPアドレスはブロックされています。");
-							return;
-						}
-						if (!response.getCountry().equalsIgnoreCase("JP")) {
-							if (response.getCountry().equalsIgnoreCase("OpenVPN")) {
-								return;
-							}
-							e.setCancelled(true);
-							e.setCancelReason(ChatColor.RED+"国外からの接続はブロックされています。");
-							return;
-						}
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				}
-			});
-		}
 		DBUUID dbuid = Tables.getUTable().get(e.getConnection().getUniqueId());
 		if (dbuid == null) {
 			dbuid = new DBUUID(-1,e.getConnection().getName(), e.getConnection().getUniqueId());
@@ -126,7 +92,7 @@ public class JoinListeners implements Listener {
 			Tables.getPipTable().insert(dbpip);
 			if (!first) {
 				ArrayList<DBPIP> pips = Tables.getPipTable().getAllIPPlayer(player.getId());
-				StringBuilder sb = new StringBuilder("New ip link : "+e.getConnection().getName()+" Info\n");
+				StringBuilder sb = new StringBuilder("New ip address : "+e.getConnection().getName()+" Info\n");
 				for (DBPIP pip : pips) {
 					DBIP dip = Tables.getIpTable().getFromID(pip.getIp());
 					sb.append("ip : "+dip.getIp()+"\n");
@@ -211,6 +177,40 @@ public class JoinListeners implements Listener {
 		}
 		player.setOnline(true);
 		player.update();
+
+		if (!player.isVpnBypass()) {
+			BungeeCord.getInstance().getScheduler().runAsync(Bungee.instance, new Runnable() {
+				public void run() {
+					try {
+						String ip = e.getPlayer().getPendingConnection().getAddress().getAddress().getHostAddress();
+						CheckIPResponse response = WebAPI.checkIP(ip);
+						if (response.isBad()) {
+							String msg = "[VPN] - username : ("+e.getPlayer().getPendingConnection().getName()+") , Address : ("+ip+") , Type : ("+response.getType()+") , Country : ("+response.getCountry()+")";
+							for (ProxiedPlayer pp : BungeeCord.getInstance().getPlayers()) {
+								if (pp.hasPermission("rezxis.admin"))
+									pp.sendMessage(new TextComponent(ChatColor.RED+msg));
+							}
+							WebAPI.webhook(DiscordWebHookEnum.CONNECT, msg);
+							DBPlayer dp = Tables.getPTable().get(e.getPlayer().getUniqueId());
+							dp.setBan(true);
+							dp.setReason(ChatColor.RED+"vpn was detected.");
+							dp.update();
+							e.getPlayer().disconnect(new TextComponent(ChatColor.RED+"あなたのIPアドレスはブロックされています。"));
+							return;
+						}
+						if (!response.getCountry().equalsIgnoreCase("JP")) {
+							if (response.getCountry().equalsIgnoreCase("OpenVPN")) {
+								return;
+							}
+							e.getPlayer().disconnect(new TextComponent(ChatColor.RED+"国外からの接続はブロックされています。"));
+							return;
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			});
+		}
 	}
 	
 	@EventHandler
