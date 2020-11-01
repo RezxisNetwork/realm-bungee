@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -35,8 +36,30 @@ import net.rezxis.mchosting.database.tables.UuidTable;
 
 public class JoinListeners implements Listener {
 	
+	public void onLink(LoginEvent e) {
+		e.setCancelled(true);
+		DBPlayer dp = Tables.getPTable().get(e.getConnection().getUniqueId());
+		if (dp == null) {
+			e.setCancelReason(ChatColor.RED+"一度サーバーに接続してください。");
+			return;
+		}
+		if (dp.getDiscordId() != -1) {
+			e.setCancelReason(ChatColor.RED+"既にDiscordアカウントとリンクされています。");
+			return;
+		}
+		String key = RandomStringUtils.randomAlphabetic(10);
+		dp.setVerifyCode(key);
+		dp.update();
+		e.setCancelReason(ChatColor.GREEN+"認証コード : "+key);
+	}
+	
 	@EventHandler
 	public void onJoin(LoginEvent e) {
+		String hostname = e.getConnection().getVirtualHost().getHostName();
+		if (hostname != null && hostname.startsWith("link.rezxis.net")) {
+			onLink(e);
+			return;
+		}
 		boolean first = false;
 		DBPlayer player = Tables.getPTable().get(e.getConnection().getUniqueId());
 		if (player == null) {
