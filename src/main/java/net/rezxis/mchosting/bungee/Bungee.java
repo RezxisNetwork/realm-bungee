@@ -266,7 +266,7 @@ public class Bungee extends Plugin implements Listener {
 	@EventHandler
 	public void onPing(ProxyPingEvent e) {
 		ServerPing eping = e.getResponse();
-		eping.setVersion(new Protocol("RezxisMC", 340));
+		eping.setVersion(new Protocol("RezxisMC", e.getResponse().getVersion().getProtocol()));
 		if (Bungee.instance.maintenance) {
 			TextComponent tc = new TextComponent("rezxis is under maintenance mode");
 			tc.setColor(ChatColor.RED);
