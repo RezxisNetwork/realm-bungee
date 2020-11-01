@@ -47,7 +47,7 @@ public class JoinListeners implements Listener {
 			Tables.getPTable().insert(player);
 		}
 		if (Bungee.instance.maintenance) {
-			if (player.getRank() != DBPlayer.Rank.DEVELOPER) {
+			if (player.getRank() != DBPlayer.Rank.DEVELOPER && player.getRank() != DBPlayer.Rank.STAFF) {
 				e.setCancelled(true);
 				e.setCancelReason(ChatColor.RED+"rezxis is under maintenance mode");
 				return;
