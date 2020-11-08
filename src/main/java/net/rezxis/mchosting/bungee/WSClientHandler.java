@@ -24,6 +24,7 @@ import net.rezxis.mchosting.network.packet.Packet;
 import net.rezxis.mchosting.network.packet.PacketType;
 import net.rezxis.mchosting.network.packet.ServerType;
 import net.rezxis.mchosting.network.packet.all.ExecuteScriptPacket;
+import net.rezxis.mchosting.network.packet.bungee.BungAnniStart;
 import net.rezxis.mchosting.network.packet.bungee.BungPlayerMessagePacket;
 import net.rezxis.mchosting.network.packet.bungee.BungPlayerSendPacket;
 import net.rezxis.mchosting.network.packet.bungee.BungServerStarted;
@@ -90,6 +91,19 @@ public class WSClientHandler implements ClientHandler {
 			ProxiedPlayer player = BungeeCord.getInstance().getPlayer(mp.getTarget());
 			if (player != null && player.isConnected()) {
 				player.sendMessage(new TextComponent(mp.getMessage()));
+			}
+		} else if (type == PacketType.AnniStart) {
+			BungAnniStart sp = gson.fromJson(message, BungAnniStart.class);
+			int port = Integer.valueOf(sp.getName().split("_")[1]);
+			ServerInfo serverInfo = ProxyServer.getInstance().constructServerInfo(sp.getName(), new InetSocketAddress("172.18.0."+(1+port), port), sp.getName(), false);
+			try {
+				Map<String,ServerInfo> servers = ProxyServer.getInstance().getServers();
+				servers.put(sp.getName(), serverInfo);
+				Field field = Configuration.class.getDeclaredField("servers");
+				field.setAccessible(true);
+				field.set(BungeeCord.getInstance().config, servers);
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 		}
 	}
