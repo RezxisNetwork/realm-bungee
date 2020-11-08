@@ -39,6 +39,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
@@ -185,6 +186,7 @@ public class Bungee extends Plugin implements Listener {
 		reloadServers();
 		ServerManager.reloadForcesHost();
 		ServerManager.reloadServers();
+		getProxy().registerChannel("RubberBand");
 	}
 	
 	private void reloadServers() {
@@ -356,6 +358,16 @@ public class Bungee extends Plugin implements Listener {
 			ev.getPlayer().sendMessage(new TextComponent(ev.getKickReasonComponent()));
 		}
 	}
+	
+	@EventHandler
+    public void on(PluginMessageEvent event)
+    {
+    	if ( !event.getTag().equalsIgnoreCase( "RubberBand" ) )
+        {
+            return;
+        }
+    	((ProxiedPlayer) event.getReceiver()).connect(BungeeCord.getInstance().getServerInfo(new String(event.getData())));
+    }
 	
 	public static class PingCallBack implements Callback<ServerPing> {
 		
